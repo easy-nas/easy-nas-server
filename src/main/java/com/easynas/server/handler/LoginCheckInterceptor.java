@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
- * @author liangyongrui@xiaomi.com
+ * @author liangyongrui
  * @date 19-1-9 下午8:55
  */
 @Component

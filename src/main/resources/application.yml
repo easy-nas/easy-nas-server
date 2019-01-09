@@ -1,3 +1,9 @@
-server:
-  #端口号
-  port: 8888
+spring:
+  profiles:
+    active: dev
+
+#公共配置与profiles选择无关
+mybatis:
+  typeAliasesPackage: com.easynas.server.dao
+  mapperLocations: classpath:mapper/*.xml
+

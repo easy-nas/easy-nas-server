@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-9 下午6:26
+ * @author liangyongrui
+ * @date 2019-01-09 22:51:43
  */
 @RestController
 @RequestMapping("")
