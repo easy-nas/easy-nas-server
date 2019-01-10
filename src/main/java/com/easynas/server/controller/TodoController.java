@@ -16,6 +16,7 @@ public class TodoController {
 
     @GetMapping("todo")
     public String todo() {
+        log.info("xxx");
         return "todo22asdf2";
     }
 }

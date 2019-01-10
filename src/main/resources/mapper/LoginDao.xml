@@ -7,4 +7,9 @@
         where username = #{username}
           and password_hash = #{passwordHash}
     </select>
+
+    <insert id="insertUser" parameterType="com.easynas.server.model.User">
+        insert user (username, password_hash)
+        values (#{username}, #{passwordHash})
+    </insert>
 </mapper>

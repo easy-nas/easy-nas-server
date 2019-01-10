@@ -4,17 +4,15 @@ import com.easynas.server.dao.LoginDao;
 import com.easynas.server.model.User;
 import com.easynas.server.model.request.LoginRequest;
 import com.easynas.server.service.LoginService;
-import com.easynas.server.util.HashUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 /**
  * @author liangyongrui
  */
+@Service
 public class LoginServiceImpl implements LoginService {
 
-    @Value("${password-salt}")
-    private String passwordSalt;
 
     private final LoginDao loginDao;
 
@@ -25,10 +23,22 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public User getUser(LoginRequest loginRequest) {
-        User user = new User();
-        user.setUsername(loginRequest.getUsername());
-        user.setPasswordHash(HashUtils.hash(loginRequest.getPassword(), passwordSalt, 32));
+        User user = new User(loginRequest);
         return loginDao.getUser(user);
+    }
+
+    @Override
+    public User register(LoginRequest loginRequest) {
+        User user = new User(loginRequest);
+        if (loginDao.insertUser(user) > 0) {
+            return user;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean hasUsername(String username) {
+        return loginDao.hasUsername(username);
     }
 
 }

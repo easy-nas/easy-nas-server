@@ -19,9 +19,9 @@ public class LogInterceptor implements HandlerInterceptor {
             return true;
         }
         try {
-            String requestLogId = request.toString() + System.currentTimeMillis();
-            request.setAttribute("request_logid", requestLogId);
-            log.info("Request: uri: {}, request_logid: {}, session_id:{}, ip: {}, " +
+            String requestLogId = request.hashCode() + "" + System.currentTimeMillis();
+            request.setAttribute("request_logId", requestLogId);
+            log.info("Request: uri: {}, request_logId: {}, session_id:{}, ip: {}, " +
                             "method: {}, content_type:{}, queryString: {}",
                     request.getRequestURI(), requestLogId,
                     request.getRequestedSessionId(), getRequestIP(request),
@@ -39,14 +39,14 @@ public class LogInterceptor implements HandlerInterceptor {
             return;
         }
         try {
-            String requestLogid = String.valueOf(request.getAttribute("request_logid"));
+            String requestLogId = String.valueOf(request.getAttribute("request_logId"));
             response.getStatus();
             if (modelAndView != null) {
-                log.info("Response: request_logid: {}, reponseStatus: {}, modelAndView: {}", requestLogid, response.getStatus(),
+                log.info("Response: request_logId: {}, reponseStatus: {}, modelAndView: {}", requestLogId, response.getStatus(),
                         modelAndView.getViewName());
                 return;
             }
-            log.info("Response: request_logid: {}, reponseStatus: {}", requestLogid, response.getStatus());
+            log.info("Response: request_logId: {}, reponseStatus: {}", requestLogId, response.getStatus());
         } catch (Exception e) {
             log.error("RequestLogInterceptor:postHandle: ", e);
         }
