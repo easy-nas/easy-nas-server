@@ -3,11 +3,13 @@ package com.easynas.server.controller;
 import com.easynas.server.config.LoginSession;
 import com.easynas.server.model.Result;
 import com.easynas.server.model.User;
-import com.easynas.server.model.request.LoginRequest;
+import com.easynas.server.model.login.request.LoginRequest;
+import com.easynas.server.model.login.request.UsernameRequest;
 import com.easynas.server.service.LoginService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author liangyongrui
  */
 @RestController
-@RequestMapping("api/login")
+@RequestMapping("api")
 @Slf4j
 public class LoginController {
 
@@ -27,7 +29,7 @@ public class LoginController {
     }
 
     @PostMapping("get-login-token")
-    public Result<String> getLoginToken(LoginRequest loginRequest) {
+    public Result<String> getLoginToken(@RequestBody LoginRequest loginRequest) {
 
         User user = loginService.getUser(loginRequest);
         if (user != null) {
@@ -41,8 +43,8 @@ public class LoginController {
      * 检查用户名是否存在，存在返回用户名
      */
     @PostMapping("check-username-exist")
-    public Result<String> checkUsernameExist(LoginRequest loginRequest) {
-        String username = loginRequest.getUsername();
+    public Result<String> checkUsernameExist(@RequestBody UsernameRequest usernameRequest) {
+        String username = usernameRequest.getUsername();
         if (loginService.hasUsername(username)) {
             return Result.fail("用户名已存在");
         }
@@ -50,7 +52,7 @@ public class LoginController {
     }
 
     @PostMapping("register")
-    public Result<User> register(LoginRequest loginRequest) {
+    public Result<User> register(@RequestBody LoginRequest loginRequest) {
         User user = loginService.register(loginRequest);
         if (user != null) {
             return Result.success(user);

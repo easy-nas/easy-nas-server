@@ -1,6 +1,6 @@
 package com.easynas.server.model;
 
-import com.easynas.server.model.request.LoginRequest;
+import com.easynas.server.model.login.request.LoginRequest;
 import com.easynas.server.util.HashUtils;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

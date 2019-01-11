@@ -10,6 +10,9 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * @author liangyongrui
+ */
 @Component
 @Slf4j
 public class LogInterceptor implements HandlerInterceptor {

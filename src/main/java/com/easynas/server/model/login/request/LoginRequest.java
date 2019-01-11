@@ -1,4 +1,4 @@
-package com.easynas.server.model.request;
+package com.easynas.server.model.login.request;
 
 import lombok.Data;
 

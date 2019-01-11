@@ -2,7 +2,7 @@ package com.easynas.server.service.impl;
 
 import com.easynas.server.dao.LoginDao;
 import com.easynas.server.model.User;
-import com.easynas.server.model.request.LoginRequest;
+import com.easynas.server.model.login.request.LoginRequest;
 import com.easynas.server.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

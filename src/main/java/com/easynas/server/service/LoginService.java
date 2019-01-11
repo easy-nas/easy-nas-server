@@ -1,12 +1,11 @@
 package com.easynas.server.service;
 
 import com.easynas.server.model.User;
-import com.easynas.server.model.request.LoginRequest;
+import com.easynas.server.model.login.request.LoginRequest;
 
 /**
  * @author liangyongrui
  */
-
 public interface LoginService {
 
     User getUser(LoginRequest loginRequest);

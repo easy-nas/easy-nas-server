@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * @author liangyongrui
+ */
 @SpringBootConfiguration
 public class WebAppInterceptorConfig implements WebMvcConfigurer {
 
@@ -14,14 +17,17 @@ public class WebAppInterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         //登录验证拦截器
         registry.addInterceptor(getLoginCheckInterceptor())
-                .addPathPatterns("/**")
-                .addPathPatterns("/register")
-                .excludePathPatterns("/static/**");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/register", "/api/check-username-exist")
+                .excludePathPatterns("/**/*.html", "/**/*.js", "/**/*.png",
+                        "/**/*.css", "/**/*.woff", "/**/*.woff2");
 
         //请求记录日志拦截器
         registry.addInterceptor(new LogInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/static/**");
+                .excludePathPatterns("/static/**",
+                        "/**/*.html", "/**/*.js", "/**/*.png", "/**/*.css",
+                        "/**/*.woff", "/**/*.woff2");
     }
 
     @Bean
