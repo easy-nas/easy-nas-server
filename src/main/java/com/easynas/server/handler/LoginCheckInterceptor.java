@@ -24,6 +24,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String header = request.getHeader("access-token");
         if (header == null) {
+            // 测试短信登录
             // Result.fail("登录验证失败请重新登录");
             return false;
         }
