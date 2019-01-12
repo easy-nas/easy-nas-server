@@ -1,0 +1,8 @@
+generalInformationPath:
+  master: ~/Easy-nas-data/general-information/
+  backup:
+
+fileSavePath:
+  master:
+    - ~/Easy-nas-data/file
+  backup:

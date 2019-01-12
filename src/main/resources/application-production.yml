@@ -4,4 +4,4 @@ server:
 password-salt: 123456
 
 #项目持久化信息保存位置
-workConfigPath: config/dev
+workConfigPath: config/production

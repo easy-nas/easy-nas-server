@@ -2,6 +2,11 @@ package com.easynas.server.handler;
 
 import com.easynas.server.model.User;
 
+/**
+ * 获取当前线程登录的用户
+ *
+ * @author liangyongrui
+ */
 public class ThreadLocalUser {
     private static ThreadLocal<User> threadLocal = new ThreadLocal<>();
 
@@ -13,7 +18,7 @@ public class ThreadLocalUser {
         return threadLocal.get();
     }
 
-    public static void remove() {
+    static void remove() {
         threadLocal.remove();
     }
 }
