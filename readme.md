@@ -50,3 +50,9 @@
 1. 在线浏览浏览照片，视频
 1. 支持网络地址备份
 1. ....(还没想好)
+
+## 文件存储路径
+
+* 用户信息保存在：${generalInformationPath}/${username}/user-info.yml
+* 用户数据保存在：${generalInformationPath}/${username}/data/*
+* 真实文件数据保存在：${fileSavePath}/${sha256}

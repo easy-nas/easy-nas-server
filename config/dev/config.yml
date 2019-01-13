@@ -1,8 +1,8 @@
 generalInformationPath:
-  master: ~/Easy-nas-data/general-information/
+  master: /home/llysrv/easy-nas-data/general-information/
   backup:
 
 fileSavePath:
   master:
-    - ~/Easy-nas-data/file
+    - /home/llysrv/easy-nas-data/file
   backup:

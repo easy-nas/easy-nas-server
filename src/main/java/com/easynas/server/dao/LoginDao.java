@@ -10,10 +10,11 @@ public interface LoginDao {
     /**
      * 根据用户名和hash密码获取用户
      *
-     * @param user 用户信息
+     * @param username 用户用户名
+     * @param password 密码
      * @return 完整的用户信息
      */
-    User getUser(User user);
+    User getUser(String username, String password);
 
     /**
      * 判断用户名是否已经存在
@@ -27,8 +28,8 @@ public interface LoginDao {
      * 插入用户
      *
      * @param user 用户信息
-     * @return 失败返回0
+     * @return 失败返回null
      */
-    int insertUser(User user);
+    User insertUser(User user);
 
 }

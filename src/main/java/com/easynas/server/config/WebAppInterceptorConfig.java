@@ -18,7 +18,7 @@ public class WebAppInterceptorConfig implements WebMvcConfigurer {
         //登录验证拦截器
         registry.addInterceptor(getLoginCheckInterceptor())
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/register", "/api/check-username-exist")
+                .excludePathPatterns("/api/register", "/api/check-username-exist", "/api/login")
                 .excludePathPatterns("/**/*.html", "/**/*.js", "/**/*.png",
                         "/**/*.css", "/**/*.woff", "/**/*.woff2");
 

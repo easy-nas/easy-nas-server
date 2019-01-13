@@ -28,9 +28,8 @@ public class LoginController {
         this.loginService = loginService;
     }
 
-    @PostMapping("get-login-token")
-    public Result<String> getLoginToken(@RequestBody LoginRequest loginRequest) {
-
+    @PostMapping("login")
+    public Result<String> login(@RequestBody LoginRequest loginRequest) {
         User user = loginService.getUser(loginRequest);
         if (user != null) {
             String token = LoginSession.getNewToken(user);
@@ -51,11 +50,18 @@ public class LoginController {
         return Result.success(username);
     }
 
+    /**
+     * 注册
+     *
+     * @param loginRequest loginRequest
+     * @return 成功返回 access-token
+     */
     @PostMapping("register")
-    public Result<User> register(@RequestBody LoginRequest loginRequest) {
+    public Result<String> register(@RequestBody LoginRequest loginRequest) {
         User user = loginService.register(loginRequest);
         if (user != null) {
-            return Result.success(user);
+            String token = LoginSession.getNewToken(user);
+            return Result.success(token);
         }
         return Result.fail("注册失败");
     }

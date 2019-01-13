@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
@@ -18,7 +20,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class ConfigDb {
+public class ConfigDb extends BaseDb {
 
     @Value("${workConfigPath}")
     private String workConfigPath;
@@ -70,34 +72,22 @@ public class ConfigDb {
 
     public void setGeneralInformationPath(String path) {
         config.getGeneralInformationPath().put("master", path);
-        persistConfig();
+        persist(config, filePath);
     }
 
     public void setBackupGeneralInformationPath(String path) {
         config.getGeneralInformationPath().put("backup", path);
-        persistConfig();
+        persist(config, filePath);
     }
 
     public void setFileSavePath(List<String> paths) {
         config.getFileSavePath().put("master", paths);
-        persistConfig();
+        persist(config, filePath);
     }
 
     public void setBackupFileSavePath(List<String> paths) {
         config.getFileSavePath().put("backup", paths);
-        persistConfig();
-    }
-
-    /**
-     * 持久化配置
-     */
-    private void persistConfig() {
-        Yaml yaml = new Yaml();
-        try {
-            yaml.dump(config, new FileWriter(filePath));
-        } catch (IOException e) {
-            log.error("持久化配置失败", e);
-        }
+        persist(config, filePath);
     }
 
     @Bean
