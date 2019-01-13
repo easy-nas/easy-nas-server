@@ -9,7 +9,7 @@ public class HashUtils {
     private HashUtils() {
     }
 
-    public static String hash(String s, String salt, int length) {
-        return Hashing.goodFastHash(length).hashUnencodedChars(s + salt).toString();
+    public static String hash(String s, String salt) {
+        return Hashing.sha256().hashUnencodedChars(s + salt).toString();
     }
 }

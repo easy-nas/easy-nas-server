@@ -8,7 +8,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -27,19 +27,31 @@ public class UserDb extends BaseDb {
     private static final String USER_INFO_YML = "user-info.yml";
 
     @Autowired
-    public UserDb(ConfigDb configDb) throws FileNotFoundException {
+    public UserDb(ConfigDb configDb) {
         this.configDb = configDb;
+        initAllUser();
+    }
+
+    public void initAllUser() {
         String generalInformationPath = configDb.getGeneralInformationPath();
+        if (generalInformationPath == null) {
+            return;
+        }
         File root = new File(generalInformationPath);
         if (!root.exists() && !root.mkdirs()) {
             return;
         }
-        for (File userDirectory : Objects.requireNonNull(root.listFiles())) {
-            log.info("正在加载用户信息, " + userDirectory.getAbsolutePath());
-            String userYml = userDirectory.getAbsolutePath() + "/" + USER_INFO_YML;
-            Yaml yaml = new Yaml();
-            User user = yaml.loadAs(new FileInputStream(userYml), User.class);
-            allUser.put(user.getUsername(), user);
+        allUser.clear();
+        try {
+            for (File userDirectory : Objects.requireNonNull(root.listFiles())) {
+                log.info("正在加载用户信息, " + userDirectory.getAbsolutePath());
+                String userYml = userDirectory.getAbsolutePath() + "/" + USER_INFO_YML;
+                Yaml yaml = new Yaml();
+                User user = yaml.loadAs(new FileInputStream(userYml), User.class);
+                allUser.put(user.getUsername(), user);
+            }
+        } catch (IOException e) {
+            log.error("初始化用户信息失败,", e);
         }
     }
 

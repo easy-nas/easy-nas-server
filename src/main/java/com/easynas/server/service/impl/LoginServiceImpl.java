@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
     private User getUserByLoginRequest(LoginRequest loginRequest) {
         User user = new User();
         user.setUsername(loginRequest.getUsername());
-        user.setPasswordHash(HashUtils.hash(loginRequest.getPassword(), passwordSalt, 32));
+        user.setPasswordHash(HashUtils.hash(loginRequest.getPassword(), passwordSalt));
         return user;
     }
 }
