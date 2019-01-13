@@ -11,4 +11,14 @@ public interface AdminService {
      * @return 错误信息，成功返回null
      */
     String setGeneralInformationPath(String path);
+
+
+    /**
+     * 设置通用信息备份路径
+     *
+     * @param path path
+     * @return 错误信息，成功返回null
+     */
+    String setBackupGeneralInformationPath(String path);
+
 }

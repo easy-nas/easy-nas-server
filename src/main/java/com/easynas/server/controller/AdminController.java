@@ -21,8 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Api("管理员操作相关api")
 public class AdminController {
 
+    private final AdminService adminService;
+
     @Autowired
-    private AdminService adminService;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
+    }
 
     @ApiOperation(value = "设置通用信息保存路径", notes = "失败返回错误")
     @PostMapping("set-general-information-path")
@@ -33,4 +37,16 @@ public class AdminController {
         }
         return Result.fail(s);
     }
+
+    @ApiOperation(value = "设置通用信息备份路径", notes = "失败返回错误")
+    @PostMapping("set-backup-general-information-path")
+    public Result<String> setBackupGeneralInformationPath(@RequestBody PathRequest pathRequest) {
+        String s = adminService.setBackupGeneralInformationPath(pathRequest.getPath());
+        if (s == null) {
+            return Result.success();
+        }
+        return Result.fail(s);
+    }
+
+
 }
