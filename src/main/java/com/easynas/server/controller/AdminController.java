@@ -52,13 +52,13 @@ public class AdminController {
     @ApiOperation(value = "WIP:设置文件保存路径", notes = "失败返回错误")
     @PostMapping("set-file-save-path")
     public Result<String> setFileSavePath(@RequestBody PathListRequest pathRequest) {
-        return null;
+        return Result.success();
     }
 
     @ApiOperation(value = "WIP:设置文件备份路径", notes = "失败返回错误")
     @PostMapping("set-file-save-path-backup")
     public Result<String> setFileSavePathBackup(@RequestBody PathListRequest pathRequest) {
-        return null;
+        return Result.success();
     }
 
 
