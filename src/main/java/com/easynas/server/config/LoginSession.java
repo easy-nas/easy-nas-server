@@ -21,7 +21,7 @@ public class LoginSession {
             .build();
 
     public static String getNewToken(User user) {
-        String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
         tokenToUser.put(uuid, user);
         return uuid;
     }

@@ -44,7 +44,7 @@ public class UserDb extends BaseDb {
     }
 
     /**
-     * 插入user, 存在则更新
+     * 插入user, 存在则更新, 系统中第一个用户为管理员
      *
      * @param user user
      * @return 插入失败返回null, 成功返回user
@@ -58,6 +58,9 @@ public class UserDb extends BaseDb {
         File file = new File(userDirectory);
         if (!file.exists() && !file.mkdirs()) {
             return null;
+        }
+        if (allUser.isEmpty()) {
+            user.setAdmin(true);
         }
         allUser.put(username, user);
         persist(user, userInfo);

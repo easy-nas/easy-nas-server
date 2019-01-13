@@ -11,6 +11,10 @@ public class User {
 
     private String username;
     private String passwordHash;
+    /**
+     * 是否为管理员
+     */
+    private boolean admin;
 
     public User() {
     }
