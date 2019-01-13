@@ -1,6 +1,7 @@
 package com.easynas.server.controller;
 
 import com.easynas.server.model.Result;
+import com.easynas.server.model.admin.request.PathListRequest;
 import com.easynas.server.model.admin.request.PathRequest;
 import com.easynas.server.service.AdminService;
 import io.swagger.annotations.Api;
@@ -39,13 +40,25 @@ public class AdminController {
     }
 
     @ApiOperation(value = "设置通用信息备份路径", notes = "失败返回错误")
-    @PostMapping("set-backup-general-information-path")
-    public Result<String> setBackupGeneralInformationPath(@RequestBody PathRequest pathRequest) {
-        String s = adminService.setBackupGeneralInformationPath(pathRequest.getPath());
+    @PostMapping("set-general-information-path-backup")
+    public Result<String> setGeneralInformationPathBackup(@RequestBody PathRequest pathRequest) {
+        String s = adminService.setGeneralInformationPathBackup(pathRequest.getPath());
         if (s == null) {
             return Result.success();
         }
         return Result.fail(s);
+    }
+
+    @ApiOperation(value = "WIP:设置文件保存路径", notes = "失败返回错误")
+    @PostMapping("set-file-save-path")
+    public Result<String> setFileSavePath(@RequestBody PathListRequest pathRequest) {
+        return null;
+    }
+
+    @ApiOperation(value = "WIP:设置文件备份路径", notes = "失败返回错误")
+    @PostMapping("set-file-save-path-backup")
+    public Result<String> setFileSavePathBackup(@RequestBody PathListRequest pathRequest) {
+        return null;
     }
 
 

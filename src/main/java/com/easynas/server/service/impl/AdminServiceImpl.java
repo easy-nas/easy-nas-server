@@ -48,19 +48,19 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public String setBackupGeneralInformationPath(String path) {
+    public String setGeneralInformationPathBackup(String path) {
         File file = new File(path);
         if (file.exists()) {
             return "该路径已存在！";
         }
-        String oldPath = configDb.getBackupGeneralInformationPath();
+        String oldPath = configDb.getGeneralInformationPathBackup();
         if (oldPath != null) {
-            boolean mvStatus = mv(oldPath, path, configDb::setBackupGeneralInformationPath);
+            boolean mvStatus = mv(oldPath, path, configDb::setGeneralInformationPathBackup);
             if (!mvStatus) {
                 return "移动历史文件失败";
             }
         } else {
-            configDb.setBackupGeneralInformationPath(path);
+            configDb.setGeneralInformationPathBackup(path);
         }
         userDb.initAllUser();
         return null;

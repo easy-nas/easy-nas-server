@@ -47,7 +47,7 @@ public class ConfigDb extends BaseDb {
     /**
      * 得到通用信息的备份路径
      */
-    public String getBackupGeneralInformationPath() {
+    public String getGeneralInformationPathBackup() {
         return config.getGeneralInformationPath().get("backup");
     }
 
@@ -65,7 +65,7 @@ public class ConfigDb extends BaseDb {
      *
      * @return 路径有多个，所以返回list
      */
-    public List<String> getBackupFileSavePath() {
+    public List<String> getFileSavePathBackup() {
         return config.getFileSavePath().get("backup");
     }
 
@@ -75,7 +75,7 @@ public class ConfigDb extends BaseDb {
         persist(config, filePath);
     }
 
-    public void setBackupGeneralInformationPath(String path) {
+    public void setGeneralInformationPathBackup(String path) {
         config.getGeneralInformationPath().put("backup", path);
         persist(config, filePath);
     }
@@ -85,7 +85,7 @@ public class ConfigDb extends BaseDb {
         persist(config, filePath);
     }
 
-    public void setBackupFileSavePath(List<String> paths) {
+    public void setFileSavePathBackup(List<String> paths) {
         config.getFileSavePath().put("backup", paths);
         persist(config, filePath);
     }

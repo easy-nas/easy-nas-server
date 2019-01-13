@@ -19,6 +19,6 @@ public interface AdminService {
      * @param path path
      * @return 错误信息，成功返回null
      */
-    String setBackupGeneralInformationPath(String path);
+    String setGeneralInformationPathBackup(String path);
 
 }
