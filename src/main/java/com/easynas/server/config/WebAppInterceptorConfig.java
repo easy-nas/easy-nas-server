@@ -25,7 +25,7 @@ public class WebAppInterceptorConfig implements WebMvcConfigurer {
         //请求记录日志拦截器
         registry.addInterceptor(new LogInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/static/**",
+                .excludePathPatterns("/static/**", "/swagger*/**",
                         "/**/*.html", "/**/*.js", "/**/*.png", "/**/*.css",
                         "/**/*.woff", "/**/*.woff2");
     }
