@@ -56,8 +56,8 @@ public class ConfigDb extends BaseDb {
      *
      * @return 路径有多个，所以返回list
      */
-    public List<String> getFileSavePath() {
-        return config.getFileSavePath().get("master");
+    public List<String> getFileSavePaths() {
+        return config.getFileSavePaths().get("master");
     }
 
     /**
@@ -65,8 +65,8 @@ public class ConfigDb extends BaseDb {
      *
      * @return 路径有多个，所以返回list
      */
-    public List<String> getFileSavePathBackup() {
-        return config.getFileSavePath().get("backup");
+    public List<String> getFileSavePathsBackup() {
+        return config.getFileSavePaths().get("backup");
     }
 
 
@@ -81,12 +81,12 @@ public class ConfigDb extends BaseDb {
     }
 
     public void setFileSavePath(List<String> paths) {
-        config.getFileSavePath().put("master", paths);
+        config.getFileSavePaths().put("master", paths);
         persist(config, filePath);
     }
 
     public void setFileSavePathBackup(List<String> paths) {
-        config.getFileSavePath().put("backup", paths);
+        config.getFileSavePaths().put("backup", paths);
         persist(config, filePath);
     }
 

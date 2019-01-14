@@ -9,5 +9,5 @@ import java.util.List;
  */
 @Data
 public class PathListRequest {
-    private List<String> path;
+    private List<String> paths;
 }

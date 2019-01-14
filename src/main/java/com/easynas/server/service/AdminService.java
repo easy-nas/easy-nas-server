@@ -21,4 +21,20 @@ public interface AdminService {
      */
     String setGeneralInformationPathBackup(String path);
 
+
+    /**
+     * 增加文件存储路径， 路径必须与现有的路径不在一个磁盘中
+     *
+     * @param path 需要新增的路径
+     * @return 错误信息，成功返回null
+     */
+    String addFileSavePath(String path);
+
+    /**
+     * 增加文件备份路径， 路径必须与现有的路径不在一个磁盘中
+     *
+     * @param path 需要新增的路径
+     * @return 错误信息，成功返回null
+     */
+    String addFileSavePathBackup(String path);
 }

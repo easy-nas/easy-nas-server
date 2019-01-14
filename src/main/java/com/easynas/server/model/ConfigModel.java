@@ -16,7 +16,7 @@ import java.util.Map;
 public class ConfigModel {
 
     private Map<String, String> generalInformationPath;
-    private Map<String, List<String>> fileSavePath;
+    private Map<String, List<String>> fileSavePaths;
 
 
 }

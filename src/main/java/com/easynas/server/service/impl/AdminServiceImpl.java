@@ -4,12 +4,14 @@ import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.db.ConfigDb;
 import com.easynas.server.db.UserDb;
 import com.easynas.server.service.AdminService;
+import com.easynas.server.util.CommandUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -66,9 +68,59 @@ public class AdminServiceImpl implements AdminService {
         return null;
     }
 
+    @Override
+    public String addFileSavePath(String path) {
+        List<String> fileSavePaths = configDb.getFileSavePaths();
+        String checkMessage = checkPath(fileSavePaths, path);
+        if (checkMessage != null) {
+            return checkMessage;
+        }
+        fileSavePaths.add(path);
+        configDb.setFileSavePath(fileSavePaths);
+        return null;
+    }
+
+    @Override
+    public String addFileSavePathBackup(String path) {
+        List<String> fileSavePaths = configDb.getFileSavePathsBackup();
+        String checkMessage = checkPath(fileSavePaths, path);
+        if (checkMessage != null) {
+            return checkMessage;
+        }
+        fileSavePaths.add(path);
+        configDb.setFileSavePathBackup(fileSavePaths);
+        return null;
+    }
+
+    /**
+     * 判断adder是否可以添加到路径中
+     *
+     * @param origin 现有的路径
+     * @param adder  需要添加的路径
+     * @return 可以返回null， 否则返回不能添加的原因
+     */
+    private String checkPath(List<String> origin, String adder) {
+        try {
+            String pathPartition = CommandUtils.getPathPartition(adder);
+            for (String fileSavePath : origin) {
+                String filePartition = CommandUtils.getPathPartition(fileSavePath);
+                if (pathPartition.equals(filePartition)) {
+                    return adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition;
+                }
+            }
+        } catch (IOException e) {
+            log.error("判断分区错误", e);
+            return "判断分区错误: " + e.toString();
+        }
+        return null;
+    }
+
     private boolean mv(String source, String destination, Consumer<String> destinationConsumer) {
         try {
-            GlobalStatus.setLock(true);
+            if (!GlobalStatus.setLock(true)) {
+                log.error("加锁失败");
+                return false;
+            }
             Process exec = Runtime.getRuntime().exec("cp " + source + " " + destination);
             exec.waitFor();
             destinationConsumer.accept(destination);

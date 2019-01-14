@@ -43,7 +43,6 @@ public class LogInterceptor implements HandlerInterceptor {
         }
         try {
             String requestLogId = String.valueOf(request.getAttribute("request_logId"));
-            response.getStatus();
             if (modelAndView != null) {
                 log.info("Response: request_logId: {}, reponseStatus: {}, modelAndView: {}", requestLogId, response.getStatus(),
                         modelAndView.getViewName());
