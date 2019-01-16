@@ -29,4 +29,10 @@ public class CommandUtils {
         }
         return infoSplit[1].split(" ")[0];
     }
+
+    public static void rm(String path) throws IOException {
+        Runtime.getRuntime().exec("rm " + path + " -rf");
+    }
+
+
 }

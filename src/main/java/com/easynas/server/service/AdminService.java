@@ -37,4 +37,12 @@ public interface AdminService {
      * @return 错误信息，成功返回null
      */
     String addFileSavePathBackup(String path);
+
+    /**
+     * 删除文件保存路径
+     *
+     * @param path 指定的路径
+     * @return 错误信息，成功返回null
+     */
+    String deleteFileSavePath(String path);
 }

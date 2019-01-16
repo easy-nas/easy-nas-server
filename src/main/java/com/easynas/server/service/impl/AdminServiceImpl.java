@@ -12,7 +12,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static com.easynas.server.util.FileUtils.canMove;
 
 /**
  * @author liangyongrui
@@ -91,6 +95,34 @@ public class AdminServiceImpl implements AdminService {
         configDb.setFileSavePathBackup(fileSavePaths);
         return null;
     }
+
+    @Override
+    public String deleteFileSavePath(String path) {
+        List<String> toPath = configDb.getFileSavePaths().stream()
+                .filter(s -> !path.equals(s)).collect(Collectors.toList());
+        if (toPath.size() == configDb.getFileSavePaths().size()) {
+            return "删除失败，路径不存在";
+        }
+        File file = new File(path);
+        if (file.isFile()) {
+            return "删除失败，需要删除的路径内容为文件而不是一个文件夹";
+        }
+        if (Objects.requireNonNull(file.listFiles()).length == 0) {
+            try {
+                CommandUtils.rm(path);
+            } catch (IOException e) {
+                return "删除失败, " + e.toString();
+            }
+            configDb.setFileSavePath(toPath);
+            return null;
+        }
+        if (!canMove(path, toPath)) {
+            return "删除失败，剩余文件保存路径空间不足";
+        }
+        //todo 移动文件
+        return null;
+    }
+
 
     /**
      * 判断adder是否可以添加到路径中
