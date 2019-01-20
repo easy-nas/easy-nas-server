@@ -49,4 +49,12 @@ public interface AdminService {
      * @return 错误信息, 成功无错误信息
      */
     Optional<String> deleteFileSavePath(@NonNull String path);
+
+    /**
+     * 删除文件备份路径
+     *
+     * @param path 指定的路径
+     * @return 错误信息, 成功无错误信息
+     */
+    Optional<String> deleteFileSavePathBackup(@NonNull String path);
 }

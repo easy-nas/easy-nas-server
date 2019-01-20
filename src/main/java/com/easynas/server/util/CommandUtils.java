@@ -1,6 +1,7 @@
 package com.easynas.server.util;
 
 import com.google.common.io.CharStreams;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NonNull;
 
 import java.io.IOException;
@@ -31,9 +32,29 @@ public class CommandUtils {
         return infoSplit[1].split(" ")[0];
     }
 
-    public static void rm(@NonNull String path) throws IOException {
-        Runtime.getRuntime().exec("rm " + path + " -rf");
+    @CanIgnoreReturnValue
+    public static Process rm(@NonNull String path) throws IOException {
+        return Runtime.getRuntime().exec("rm " + path + " -rf");
     }
 
+    @CanIgnoreReturnValue
+    public static Process cp(@NonNull String source, @NonNull String destination) throws IOException {
+        return Runtime.getRuntime().exec("cp " + source + " " + destination + " -r");
+    }
+
+    /**
+     * 先复制，复制完成后删除源数据
+     *
+     * @param source      源数据地址
+     * @param destination 目的地址
+     * @return 删除process
+     */
+    @CanIgnoreReturnValue
+    public static Process cpThenRm(@NonNull String source, @NonNull String destination)
+            throws IOException, InterruptedException {
+        final var process = cp(source, destination);
+        process.waitFor();
+        return rm(source);
+    }
 
 }

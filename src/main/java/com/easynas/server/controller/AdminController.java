@@ -56,16 +56,16 @@ public class AdminController {
         return dealPath(pathRequest.getPath(), adminService::addFileSavePathBackup);
     }
 
-    @ApiOperation(value = "WIP:删除文件保存路径", notes = "失败返回错误")
+    @ApiOperation(value = "删除文件保存路径", notes = "失败返回错误")
     @PostMapping("delete-file-save-path")
     public Result<String> deleteFileSavePath(@RequestBody PathRequest pathRequest) {
         return dealPath(pathRequest.getPath(), adminService::deleteFileSavePath);
     }
 
-    @ApiOperation(value = "WIP:删除文件备份路径", notes = "失败返回错误")
+    @ApiOperation(value = "删除文件备份路径", notes = "失败返回错误")
     @PostMapping("delete-file-save-path-backup")
     public Result<String> deleteFileSavePathBackup(@RequestBody PathRequest pathRequest) {
-        return Result.success();
+        return dealPath(pathRequest.getPath(), adminService::deleteFileSavePathBackup);
     }
 
 
