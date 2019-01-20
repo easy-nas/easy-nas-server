@@ -1,6 +1,7 @@
 package com.easynas.server.db;
 
 import com.easynas.server.model.ConfigModel;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,9 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 修改读取config配置
@@ -24,16 +27,17 @@ public class ConfigDb extends BaseDb {
 
     @Value("${workConfigPath}")
     private String workConfigPath;
+    @Value("${project.name}")
+    private String projectName;
 
     private String filePath;
     private ConfigModel config;
 
     @PostConstruct
     private void init() throws FileNotFoundException {
-        File path = new File("");
-        filePath = path.getAbsolutePath() + "/" + workConfigPath + "/config.yml";
+        filePath = new File("").getAbsolutePath() + "/config/admin-config.yml";
         log.info("config path: " + filePath);
-        Yaml yaml = new Yaml();
+        final var yaml = new Yaml();
         config = yaml.loadAs(new FileInputStream(filePath), ConfigModel.class);
     }
 
@@ -47,8 +51,8 @@ public class ConfigDb extends BaseDb {
     /**
      * 得到通用信息的备份路径
      */
-    public String getGeneralInformationPathBackup() {
-        return config.getGeneralInformationPath().get("backup");
+    public Optional<String> getGeneralInformationPathBackup() {
+        return Optional.ofNullable(config.getGeneralInformationPath().get("backup"));
     }
 
     /**
@@ -66,26 +70,26 @@ public class ConfigDb extends BaseDb {
      * @return 路径有多个，所以返回list
      */
     public List<String> getFileSavePathsBackup() {
-        return config.getFileSavePaths().get("backup");
+        return config.getFileSavePaths().computeIfAbsent("backup", t -> new ArrayList<>());
     }
 
 
-    public void setGeneralInformationPath(String path) {
+    public void setGeneralInformationPath(@NonNull String path) {
         config.getGeneralInformationPath().put("master", path);
         persist(config, filePath);
     }
 
-    public void setGeneralInformationPathBackup(String path) {
+    public void setGeneralInformationPathBackup(@NonNull String path) {
         config.getGeneralInformationPath().put("backup", path);
         persist(config, filePath);
     }
 
-    public void setFileSavePath(List<String> paths) {
+    public void setFileSavePath(@NonNull List<String> paths) {
         config.getFileSavePaths().put("master", paths);
         persist(config, filePath);
     }
 
-    public void setFileSavePathBackup(List<String> paths) {
+    public void setFileSavePathBackup(@NonNull List<String> paths) {
         config.getFileSavePaths().put("backup", paths);
         persist(config, filePath);
     }

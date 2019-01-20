@@ -1,7 +1,6 @@
 package com.easynas.server.handler;
 
 import com.easynas.server.config.LoginSession;
-import com.easynas.server.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,6 @@ import static com.easynas.server.util.JsonUtils.toJsonString;
 
 /**
  * @author liangyongrui
- * @date 19-1-9 下午8:55
  */
 @Component
 @Slf4j
@@ -35,22 +33,22 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
 
-        String header = request.getHeader("access-token");
+        final var header = request.getHeader("access-token");
         if (header == null) {
             sendLoginError(response);
             return false;
         }
-        User user = LoginSession.getUserByToken(header);
-        if (user == null) {
+        final var user = LoginSession.getUserByToken(header);
+        if (user.isEmpty()) {
             sendLoginError(response);
             return false;
         }
 
-        if (request.getRequestURI().startsWith(ADMIN_URL) && !user.isAdmin()) {
+        if (request.getRequestURI().startsWith(ADMIN_URL) && !user.get().isAdmin()) {
             sendPermissionDenied(response);
             return false;
         }
-        ThreadLocalUser.setUser(user);
+        ThreadLocalUser.setUser(user.get());
         return true;
     }
 

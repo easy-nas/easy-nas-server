@@ -2,7 +2,6 @@ package com.easynas.server.controller;
 
 import com.easynas.server.config.LoginSession;
 import com.easynas.server.model.Result;
-import com.easynas.server.model.User;
 import com.easynas.server.model.login.request.LoginRequest;
 import com.easynas.server.model.login.request.UsernameRequest;
 import com.easynas.server.service.LoginService;
@@ -33,12 +32,8 @@ public class LoginController {
             notes = "header中不需要有access-token即可获取, 获取后所有的请求都在header中带上这个access-token")
     @PostMapping("login")
     public Result<String> login(@RequestBody LoginRequest loginRequest) {
-        User user = loginService.getUser(loginRequest);
-        if (user != null) {
-            String token = LoginSession.getNewToken(user);
-            return Result.success(token);
-        }
-        return Result.fail("用户名或密码错误");
+        return loginService.getUser(loginRequest).map(LoginSession::getNewToken).map(Result::success)
+                .orElseGet(() -> Result.fail("用户名或密码错误"));
     }
 
     /**
@@ -47,7 +42,7 @@ public class LoginController {
     @ApiOperation(value = "检查用户名是否存在", notes = "header中不需要有access-token即可获取")
     @PostMapping("check-username-exist")
     public Result<String> checkUsernameExist(@RequestBody UsernameRequest usernameRequest) {
-        String username = usernameRequest.getUsername();
+        final var username = usernameRequest.getUsername();
         if (loginService.hasUsername(username)) {
             return Result.fail("用户名已存在");
         }
@@ -64,12 +59,8 @@ public class LoginController {
             notes = "header中不需要有access-token即可获取, 获取后所有的请求都在header中带上这个access-token")
     @PostMapping("register")
     public Result<String> register(@RequestBody LoginRequest loginRequest) {
-        User user = loginService.register(loginRequest);
-        if (user != null) {
-            String token = LoginSession.getNewToken(user);
-            return Result.success(token);
-        }
-        return Result.fail("注册失败");
+        return loginService.register(loginRequest).map(LoginSession::getNewToken).map(Result::success)
+                .orElseGet(() -> Result.fail("注册失败"));
     }
 
 }

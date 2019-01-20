@@ -1,6 +1,9 @@
 package com.easynas.server.dao;
 
 import com.easynas.server.model.User;
+import lombok.NonNull;
+
+import java.util.Optional;
 
 /**
  * @author liangyongrui
@@ -14,7 +17,7 @@ public interface LoginDao {
      * @param password 密码
      * @return 完整的用户信息
      */
-    User getUser(String username, String password);
+    Optional<User> getUser(@NonNull String username, @NonNull String password);
 
     /**
      * 判断用户名是否已经存在
@@ -22,7 +25,7 @@ public interface LoginDao {
      * @param username 需要判断的用户名
      * @return 存在返回true
      */
-    boolean hasUsername(String username);
+    boolean hasUsername(@NonNull String username);
 
     /**
      * 插入用户
@@ -30,6 +33,6 @@ public interface LoginDao {
      * @param user 用户信息
      * @return 失败返回null
      */
-    User insertUser(User user);
+    Optional<User> insertUser(@NonNull User user);
 
 }

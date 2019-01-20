@@ -1,8 +1,15 @@
 package com.easynas.server.util;
 
+
+import lombok.NonNull;
+
 import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toList;
 
 /**
  * @author liangyongrui
@@ -16,25 +23,29 @@ public class FileUtils {
      * todo test
      * 判断是否可以把fromPath中的文件，移动到toPath中
      */
-    public static boolean canMove(String fromPath, List<String> toPaths) {
-        //todo check 路径是否均为文件夹
-        File[] files = new File(fromPath).listFiles();
+    public static boolean canMove(@NonNull String fromPath, @NonNull List<String> toPaths) {
+        final var fromPathDirectory = new File(fromPath);
+        if (fromPathDirectory.isFile()) {
+            return false;
+        }
+        final var toPathDirectories = toPaths.stream().map(File::new).filter(File::isDirectory).collect(toList());
+        if (toPathDirectories.size() == 0 || toPathDirectories.size() < toPaths.size()) {
+            return false;
+        }
+        final var files = fromPathDirectory.listFiles();
         if (files == null) {
             return false;
         }
-        List<Long> filesSize = Arrays.stream(files).map(File::length).collect(Collectors.toList());
-        Queue<Long> maxHeap = toPaths.stream().map(t -> new File(t).getFreeSpace()).collect(Collectors.toCollection(PriorityQueue::new));
-        if (maxHeap.isEmpty()) {
-            return false;
-        }
+        final var filesSize = Arrays.stream(files).map(File::length).collect(toList());
+        final var maxHeap = toPathDirectories.stream().map(File::getFreeSpace)
+                .collect(toCollection(PriorityQueue::new));
         filesSize.sort(Long::compareTo);
-        for (Long size : filesSize) {
-            Long topSize = maxHeap.poll();
-            if (size > topSize) {
+        for (final var size : filesSize) {
+            final var topSize = maxHeap.poll();
+            if (topSize == null || size > topSize) {
                 return false;
             }
-            topSize -= size;
-            maxHeap.add(topSize);
+            maxHeap.add(topSize - size);
         }
         return true;
     }
@@ -45,20 +56,18 @@ public class FileUtils {
      * @param path 绝对路径
      * @return size
      */
-    public static long getPathSize(String path) {
-        File file = new File(path);
+    public static long getPathSize(@NonNull String path) {
+        final var file = new File(path);
         return getPathSize(file);
     }
 
-    public static long getPathSize(File file) {
+    public static long getPathSize(@NonNull File file) {
         if (file.isFile()) {
             return file.length();
         }
-        long sum = 0;
-        for (File child : Objects.requireNonNull(file.listFiles())) {
-            sum += getPathSize(child);
-        }
-        return sum;
+        final var fileChildren = file.listFiles();
+        assert fileChildren != null;
+        return Arrays.stream(fileChildren).map(FileUtils::getPathSize).mapToLong(t -> t).sum();
     }
 
 }

@@ -5,6 +5,7 @@ import com.easynas.server.model.admin.request.PathRequest;
 import com.easynas.server.service.AdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -26,7 +28,7 @@ public class AdminController {
     private final AdminService adminService;
 
     @Autowired
-    public AdminController(AdminService adminService) {
+    public AdminController(@NonNull AdminService adminService) {
         this.adminService = adminService;
     }
 
@@ -61,21 +63,21 @@ public class AdminController {
     }
 
     @ApiOperation(value = "WIP:删除文件备份路径", notes = "失败返回错误")
-    @PostMapping("delete-file-save-path")
+    @PostMapping("delete-file-save-path-backup")
     public Result<String> deleteFileSavePathBackup(@RequestBody PathRequest pathRequest) {
         return Result.success();
     }
 
 
-    private Result<String> dealPath(String path, Function<String, String> function) {
+    private Result<String> dealPath(String path, Function<String, Optional<String>> function) {
         if (path == null || path.strip().length() == 0) {
             return Result.fail("路径为空");
         }
-        String errorMessage = function.apply(path);
-        if (errorMessage == null) {
+        final var errorMessage = function.apply(path);
+        if (errorMessage.isEmpty()) {
             return Result.success();
         }
-        return Result.fail(errorMessage);
+        return Result.fail(errorMessage.get());
     }
 
 }

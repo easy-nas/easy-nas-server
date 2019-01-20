@@ -2,6 +2,3 @@ server:
   port: 8888
 
 password-salt: 123456
-
-#项目持久化信息保存位置
-workConfigPath: config/production

@@ -22,7 +22,7 @@ public class LogInterceptor implements HandlerInterceptor {
             return true;
         }
         try {
-            String requestLogId = request.hashCode() + "" + System.currentTimeMillis();
+            final var requestLogId = request.hashCode() + "" + System.currentTimeMillis();
             request.setAttribute("request_logId", requestLogId);
             log.info("Request: uri: {}, request_logId: {}, session_id:{}, ip: {}, " +
                             "method: {}, content_type:{}, queryString: {}",
@@ -37,45 +37,45 @@ public class LogInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) {
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+                           @Nullable ModelAndView modelAndView) {
         if (handler instanceof ResourceHttpRequestHandler) {
             return;
         }
         try {
-            String requestLogId = String.valueOf(request.getAttribute("request_logId"));
+            final var requestLogId = String.valueOf(request.getAttribute("request_logId"));
             if (modelAndView != null) {
-                log.info("Response: request_logId: {}, reponseStatus: {}, modelAndView: {}", requestLogId, response.getStatus(),
-                        modelAndView.getViewName());
+                log.info("Response: request_logId: {}, responseStatus: {}, modelAndView: {}",
+                        requestLogId, response.getStatus(), modelAndView.getViewName());
                 return;
             }
-            log.info("Response: request_logId: {}, reponseStatus: {}", requestLogId, response.getStatus());
+            log.info("Response: request_logId: {}, responseStatus: {}", requestLogId, response.getStatus());
         } catch (Exception e) {
             log.error("RequestLogInterceptor:postHandle: ", e);
         }
     }
 
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) {
-
-    }
-
     private String getRequestIP(HttpServletRequest request) {
         String ip = request.getHeader("x-forwarded-for");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (emptyIp(ip)) {
             ip = request.getHeader("Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (emptyIp(ip)) {
             ip = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (emptyIp(ip)) {
             ip = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (emptyIp(ip)) {
             ip = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+        if (emptyIp(ip)) {
             ip = request.getRemoteAddr();
         }
         return ip;
+    }
+
+    private boolean emptyIp(String ip) {
+        return ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip);
     }
 }

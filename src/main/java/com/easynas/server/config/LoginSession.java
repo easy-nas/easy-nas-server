@@ -3,7 +3,10 @@ package com.easynas.server.config;
 import com.easynas.server.model.User;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import lombok.NonNull;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -20,14 +23,14 @@ public class LoginSession {
             .expireAfterWrite(3, TimeUnit.DAYS)
             .build();
 
-    public static String getNewToken(User user) {
-        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+    public static String getNewToken(@NonNull User user) {
+        final var uuid = UUID.randomUUID().toString().replaceAll("-", "");
         tokenToUser.put(uuid, user);
         return uuid;
     }
 
-    public static User getUserByToken(String token) {
-        return tokenToUser.getIfPresent(token);
+    public static Optional<User> getUserByToken(@NonNull String token) {
+        return Optional.ofNullable(tokenToUser.getIfPresent(token));
     }
 
 }

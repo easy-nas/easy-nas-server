@@ -1,6 +1,7 @@
 package com.easynas.server.util;
 
 import com.google.common.io.CharStreams;
+import lombok.NonNull;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,17 +21,17 @@ public class CommandUtils {
      * @param path 需要获取的路径
      * @return 分区
      */
-    public static String getPathPartition(String path) throws IOException {
-        Process exec = Runtime.getRuntime().exec("df " + path);
-        String info = CharStreams.toString(new InputStreamReader(exec.getInputStream()));
-        String[] infoSplit = info.split("\n");
+    public static String getPathPartition(@NonNull String path) throws IOException {
+        final var exec = Runtime.getRuntime().exec("df " + path);
+        final var info = CharStreams.toString(new InputStreamReader(exec.getInputStream()));
+        final var infoSplit = info.split("\n");
         if (infoSplit.length <= 1) {
             throw new IOException("获取路径所在分区失败， " + info);
         }
         return infoSplit[1].split(" ")[0];
     }
 
-    public static void rm(String path) throws IOException {
+    public static void rm(@NonNull String path) throws IOException {
         Runtime.getRuntime().exec("rm " + path + " -rf");
     }
 

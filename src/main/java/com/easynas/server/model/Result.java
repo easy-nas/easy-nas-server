@@ -2,6 +2,8 @@ package com.easynas.server.model;
 
 import lombok.Data;
 
+import javax.annotation.Nullable;
+
 /**
  * 请求返回结果类型
  *
@@ -17,7 +19,7 @@ public class Result<T> {
         return success(null);
     }
 
-    public static <T> Result<T> success(T data) {
+    public static <T> Result<T> success(@Nullable T data) {
         Result<T> result = new Result<>();
         result.code = 200;
         result.message = "success";
@@ -25,7 +27,7 @@ public class Result<T> {
         return result;
     }
 
-    public static <T> Result<T> fail(String message) {
+    public static <T> Result<T> fail(@Nullable String message) {
         Result<T> result = new Result<>();
         result.code = 400;
         result.message = message;

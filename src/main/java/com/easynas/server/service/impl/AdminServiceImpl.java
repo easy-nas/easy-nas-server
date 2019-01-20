@@ -5,6 +5,7 @@ import com.easynas.server.db.ConfigDb;
 import com.easynas.server.db.UserDb;
 import com.easynas.server.service.AdminService;
 import com.easynas.server.util.CommandUtils;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -29,98 +30,95 @@ public class AdminServiceImpl implements AdminService {
     private final UserDb userDb;
 
     @Autowired
-    public AdminServiceImpl(ConfigDb configDb, UserDb userDb) {
+    public AdminServiceImpl(@NonNull ConfigDb configDb, @NonNull UserDb userDb) {
         this.configDb = configDb;
         this.userDb = userDb;
     }
 
     @Override
-    public String setGeneralInformationPath(String path) {
-        File file = new File(path);
-        if (file.exists()) {
-            return "该路径已存在！";
+    public Optional<String> setGeneralInformationPath(@NonNull String path) {
+        if (new File(path).exists()) {
+            return Optional.of("该路径已存在！");
         }
-        String oldPath = configDb.getGeneralInformationPath();
-        if (oldPath != null) {
-            boolean mvStatus = mv(oldPath, path, configDb::setGeneralInformationPath);
-            if (!mvStatus) {
-                return "移动历史文件失败";
-            }
-        } else {
-            configDb.setGeneralInformationPath(path);
+        final var oldPath = configDb.getGeneralInformationPath();
+        boolean mvStatus = mv(oldPath, path, configDb::setGeneralInformationPath);
+        if (!mvStatus) {
+            return Optional.of("移动历史文件失败");
         }
         userDb.initAllUser();
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public String setGeneralInformationPathBackup(String path) {
+    public Optional<String> setGeneralInformationPathBackup(@NonNull String path) {
         File file = new File(path);
         if (file.exists()) {
-            return "该路径已存在！";
+            return Optional.of("该路径已存在！");
         }
-        String oldPath = configDb.getGeneralInformationPathBackup();
-        if (oldPath != null) {
-            boolean mvStatus = mv(oldPath, path, configDb::setGeneralInformationPathBackup);
+        final var oldPath = configDb.getGeneralInformationPathBackup();
+        if (oldPath.isPresent()) {
+            boolean mvStatus = mv(oldPath.get(), path, configDb::setGeneralInformationPathBackup);
             if (!mvStatus) {
-                return "移动历史文件失败";
+                return Optional.of("移动历史文件失败");
             }
         } else {
             configDb.setGeneralInformationPathBackup(path);
         }
         userDb.initAllUser();
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public String addFileSavePath(String path) {
-        List<String> fileSavePaths = configDb.getFileSavePaths();
-        String checkMessage = checkPath(fileSavePaths, path);
-        if (checkMessage != null) {
+    public Optional<String> addFileSavePath(@NonNull String path) {
+        final var fileSavePaths = configDb.getFileSavePaths();
+        final var checkMessage = checkPath(fileSavePaths, path);
+        if (checkMessage.isPresent()) {
             return checkMessage;
         }
         fileSavePaths.add(path);
         configDb.setFileSavePath(fileSavePaths);
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public String addFileSavePathBackup(String path) {
-        List<String> fileSavePaths = configDb.getFileSavePathsBackup();
-        String checkMessage = checkPath(fileSavePaths, path);
-        if (checkMessage != null) {
+    public Optional<String> addFileSavePathBackup(@NonNull String path) {
+        final var fileSavePaths = configDb.getFileSavePathsBackup();
+        final var checkMessage = checkPath(fileSavePaths, path);
+        if (checkMessage.isPresent()) {
             return checkMessage;
         }
         fileSavePaths.add(path);
         configDb.setFileSavePathBackup(fileSavePaths);
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public String deleteFileSavePath(String path) {
+    public Optional<String> deleteFileSavePath(@NonNull String path) {
         List<String> toPath = configDb.getFileSavePaths().stream()
                 .filter(s -> !path.equals(s)).collect(Collectors.toList());
         if (toPath.size() == configDb.getFileSavePaths().size()) {
-            return "删除失败，路径不存在";
+            return Optional.of("删除失败，路径不存在");
         }
         File file = new File(path);
         if (file.isFile()) {
-            return "删除失败，需要删除的路径内容为文件而不是一个文件夹";
+            return Optional.of("删除失败，需要删除的路径内容为文件而不是一个文件夹");
         }
-        if (Objects.requireNonNull(file.listFiles()).length == 0) {
+        final var files = file.listFiles();
+        assert files != null;
+        if (files.length == 0) {
             try {
                 CommandUtils.rm(path);
             } catch (IOException e) {
-                return "删除失败, " + e.toString();
+                return Optional.of("删除失败, " + e.toString());
             }
             configDb.setFileSavePath(toPath);
-            return null;
+            return Optional.empty();
         }
         if (!canMove(path, toPath)) {
-            return "删除失败，剩余文件保存路径空间不足";
+            return Optional.of("删除失败，剩余文件保存路径空间不足");
         }
         //todo 移动文件
-        return null;
+        return Optional.empty();
     }
 
 
@@ -131,23 +129,23 @@ public class AdminServiceImpl implements AdminService {
      * @param adder  需要添加的路径
      * @return 可以返回null， 否则返回不能添加的原因
      */
-    private String checkPath(List<String> origin, String adder) {
+    private Optional<String> checkPath(@NonNull List<String> origin, @NonNull String adder) {
         try {
             String pathPartition = CommandUtils.getPathPartition(adder);
             for (String fileSavePath : origin) {
                 String filePartition = CommandUtils.getPathPartition(fileSavePath);
                 if (pathPartition.equals(filePartition)) {
-                    return adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition;
+                    return Optional.of(adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition);
                 }
             }
         } catch (IOException e) {
             log.error("判断分区错误", e);
-            return "判断分区错误: " + e.toString();
+            return Optional.of("判断分区错误: " + e.toString());
         }
-        return null;
+        return Optional.empty();
     }
 
-    private boolean mv(String source, String destination, Consumer<String> destinationConsumer) {
+    private boolean mv(@NonNull String source, @NonNull String destination, @NonNull Consumer<String> destinationConsumer) {
         try {
             if (!GlobalStatus.setLock(true)) {
                 log.error("加锁失败");

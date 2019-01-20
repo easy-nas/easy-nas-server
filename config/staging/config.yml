@@ -1,6 +1,0 @@
-!!com.easynas.server.model.ConfigModel
-fileSavePaths:
-  master: [easy-nas-data/file]
-  backup: null
-generalInformationPath: {master: /home/llysrv/IdeaProjects/easy-nas-server/easy-nas-data/general-information/,
-  backup: null}

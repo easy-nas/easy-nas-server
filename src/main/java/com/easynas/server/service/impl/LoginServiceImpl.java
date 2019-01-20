@@ -5,9 +5,12 @@ import com.easynas.server.model.User;
 import com.easynas.server.model.login.request.LoginRequest;
 import com.easynas.server.service.LoginService;
 import com.easynas.server.util.HashUtils;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @author liangyongrui
@@ -21,32 +24,32 @@ public class LoginServiceImpl implements LoginService {
     private String passwordSalt;
 
     @Autowired
-    public LoginServiceImpl(LoginDao loginDao) {
+    public LoginServiceImpl(@NonNull LoginDao loginDao) {
         this.loginDao = loginDao;
     }
 
     @Override
-    public User getUser(LoginRequest loginRequest) {
+    public Optional<User> getUser(@NonNull LoginRequest loginRequest) {
         User user = getUserByLoginRequest(loginRequest);
         return loginDao.getUser(user.getUsername(), user.getPasswordHash());
     }
 
     @Override
-    public User register(LoginRequest loginRequest) {
+    public Optional<User> register(@NonNull LoginRequest loginRequest) {
         User user = getUserByLoginRequest(loginRequest);
-        if (!loginDao.hasUsername(user.getUsername()) && loginDao.insertUser(user) != null) {
-            return user;
+        if (!loginDao.hasUsername(user.getUsername()) && loginDao.insertUser(user).isPresent()) {
+            return Optional.of(user);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public boolean hasUsername(String username) {
+    public boolean hasUsername(@NonNull String username) {
         return loginDao.hasUsername(username);
     }
 
 
-    private User getUserByLoginRequest(LoginRequest loginRequest) {
+    private User getUserByLoginRequest(@NonNull LoginRequest loginRequest) {
         User user = new User();
         user.setUsername(loginRequest.getUsername());
         user.setPasswordHash(HashUtils.hash(loginRequest.getPassword(), passwordSalt));

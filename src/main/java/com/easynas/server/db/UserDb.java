@@ -1,6 +1,7 @@
 package com.easynas.server.db;
 
 import com.easynas.server.model.User;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 用户信息相关操作
@@ -27,27 +29,27 @@ public class UserDb extends BaseDb {
     private static final String USER_INFO_YML = "user-info.yml";
 
     @Autowired
-    public UserDb(ConfigDb configDb) {
+    public UserDb(@NonNull ConfigDb configDb) {
         this.configDb = configDb;
         initAllUser();
     }
 
     public void initAllUser() {
-        String generalInformationPath = configDb.getGeneralInformationPath();
-        if (generalInformationPath == null) {
+        final var generalInformationPath = configDb.getGeneralInformationPath();
+        if (generalInformationPath.isEmpty()) {
             return;
         }
-        File root = new File(generalInformationPath);
+        final var root = new File(generalInformationPath);
         if (!root.exists() && !root.mkdirs()) {
             return;
         }
         allUser.clear();
         try {
-            for (File userDirectory : Objects.requireNonNull(root.listFiles())) {
+            final var userDirectories = Objects.requireNonNull(root.listFiles());
+            for (File userDirectory : userDirectories) {
                 log.info("正在加载用户信息, " + userDirectory.getAbsolutePath());
-                String userYml = userDirectory.getAbsolutePath() + "/" + USER_INFO_YML;
-                Yaml yaml = new Yaml();
-                User user = yaml.loadAs(new FileInputStream(userYml), User.class);
+                final var userYml = userDirectory.getAbsolutePath() + "/" + USER_INFO_YML;
+                User user = new Yaml().loadAs(new FileInputStream(userYml), User.class);
                 allUser.put(user.getUsername(), user);
             }
         } catch (IOException e) {
@@ -59,27 +61,28 @@ public class UserDb extends BaseDb {
      * 插入user, 存在则更新, 系统中第一个用户为管理员
      *
      * @param user user
-     * @return 插入失败返回null, 成功返回user
+     * @return optional 返回user
      */
-    public User insertUser(User user) {
-        String generalInformationPath = configDb.getGeneralInformationPath();
+    public Optional<User> insertUser(@NonNull User user) {
+        final var generalInformationPath = configDb.getGeneralInformationPath();
+
         String username = user.getUsername();
         String userDirectory = generalInformationPath + "/" + username;
         String userInfo = userDirectory + "/" + USER_INFO_YML;
 
         File file = new File(userDirectory);
         if (!file.exists() && !file.mkdirs()) {
-            return null;
+            return Optional.empty();
         }
         if (allUser.isEmpty()) {
             user.setAdmin(true);
         }
         allUser.put(username, user);
         persist(user, userInfo);
-        return user;
+        return Optional.of(user);
     }
 
-    public User getUser(String username) {
-        return allUser.get(username);
+    public Optional<User> getUser(@NonNull String username) {
+        return Optional.ofNullable(allUser.get(username));
     }
 }
