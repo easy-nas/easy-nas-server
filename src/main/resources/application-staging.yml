@@ -1,4 +1,5 @@
 server:
   port: 8888
 
-password-salt: 123456
+ftp:
+  port: 2222

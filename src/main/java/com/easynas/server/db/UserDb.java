@@ -10,10 +10,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 用户信息相关操作
@@ -84,5 +81,9 @@ public class UserDb extends BaseDb {
 
     public Optional<User> getUser(@NonNull String username) {
         return Optional.ofNullable(allUser.get(username));
+    }
+
+    public Collection<User> getAllUser() {
+        return allUser.values();
     }
 }

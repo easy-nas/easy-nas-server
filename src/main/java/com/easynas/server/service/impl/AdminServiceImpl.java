@@ -1,7 +1,7 @@
 package com.easynas.server.service.impl;
 
 import com.easynas.server.config.GlobalStatus;
-import com.easynas.server.db.ConfigDb;
+import com.easynas.server.dao.ConfigDao;
 import com.easynas.server.db.UserDb;
 import com.easynas.server.service.AdminService;
 import com.easynas.server.util.CommandUtils;
@@ -28,12 +28,12 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
-    private final ConfigDb configDb;
+    private final ConfigDao configDao;
     private final UserDb userDb;
 
     @Autowired
-    public AdminServiceImpl(@NonNull ConfigDb configDb, @NonNull UserDb userDb) {
-        this.configDb = configDb;
+    public AdminServiceImpl(@NonNull ConfigDao configDao, @NonNull UserDb userDb) {
+        this.configDao = configDao;
         this.userDb = userDb;
     }
 
@@ -42,8 +42,8 @@ public class AdminServiceImpl implements AdminService {
         if (new File(path).exists()) {
             return Optional.of("该路径已存在！");
         }
-        return setGeneralInformationPath(configDb.getGeneralInformationPath(), path,
-                configDb::setGeneralInformationPath);
+        return setGeneralInformationPath(configDao.getGeneralInformationPath(), path,
+                configDao::setGeneralInformationPath);
     }
 
 
@@ -52,32 +52,32 @@ public class AdminServiceImpl implements AdminService {
         if (new File(path).exists()) {
             return Optional.of("该路径已存在！");
         }
-        if (configDb.getGeneralInformationPathBackup().isEmpty()) {
-            configDb.setGeneralInformationPathBackup(path);
+        if (configDao.getGeneralInformationPathBackup().isEmpty()) {
+            configDao.setGeneralInformationPathBackup(path);
             return Optional.empty();
         }
-        return setGeneralInformationPath(configDb.getGeneralInformationPathBackup().get(), path,
-                configDb::setGeneralInformationPathBackup);
+        return setGeneralInformationPath(configDao.getGeneralInformationPathBackup().get(), path,
+                configDao::setGeneralInformationPathBackup);
     }
 
     @Override
     public Optional<String> addFileSavePath(@NonNull String path) {
-        return addFileSavePath(configDb.getFileSavePaths(), path, configDb::setFileSavePath);
+        return addFileSavePath(configDao.getFileSavePaths(), path, configDao::setFileSavePath);
     }
 
     @Override
     public Optional<String> addFileSavePathBackup(@NonNull String path) {
-        return addFileSavePath(configDb.getFileSavePathsBackup(), path, configDb::setFileSavePathBackup);
+        return addFileSavePath(configDao.getFileSavePathsBackup(), path, configDao::setFileSavePathBackup);
     }
 
     @Override
     public Optional<String> deleteFileSavePath(@NonNull String path) {
-        return deleteFileSavePath(path, configDb.getFileSavePaths(), configDb::setFileSavePath);
+        return deleteFileSavePath(path, configDao.getFileSavePaths(), configDao::setFileSavePath);
     }
 
     @Override
     public Optional<String> deleteFileSavePathBackup(@NonNull String path) {
-        return deleteFileSavePath(path, configDb.getFileSavePathsBackup(), configDb::setFileSavePathBackup);
+        return deleteFileSavePath(path, configDao.getFileSavePathsBackup(), configDao::setFileSavePathBackup);
     }
 
 

@@ -20,8 +20,6 @@ public class LoginServiceImpl implements LoginService {
 
 
     private final LoginDao loginDao;
-    @Value("${password-salt}")
-    private String passwordSalt;
 
     @Autowired
     public LoginServiceImpl(@NonNull LoginDao loginDao) {
@@ -52,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
     private User getUserByLoginRequest(@NonNull LoginRequest loginRequest) {
         User user = new User();
         user.setUsername(loginRequest.getUsername());
-        user.setPasswordHash(HashUtils.hash(loginRequest.getPassword(), passwordSalt));
+        user.setPasswordHash(HashUtils.hash(loginRequest.getPassword()));
         return user;
     }
 }

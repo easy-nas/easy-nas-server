@@ -4,6 +4,7 @@ import com.google.common.io.CharStreams;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.NonNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
@@ -39,7 +40,20 @@ public class CommandUtils {
 
     @CanIgnoreReturnValue
     public static Process cp(@NonNull String source, @NonNull String destination) throws IOException {
+        final var directoryPath = destination.substring(0, destination.lastIndexOf("/"));
+        final var fa = new File(directoryPath);
+        if (!fa.exists() && !fa.mkdirs()) {
+            throw new IOException("创建父目录失败");
+        }
         return Runtime.getRuntime().exec("cp " + source + " " + destination + " -r");
+    }
+
+    /**
+     * 软链接
+     */
+    @CanIgnoreReturnValue
+    public static Process lnS(@NonNull String source, @NonNull String destination) throws IOException {
+        return Runtime.getRuntime().exec("ln -sfn " + source + " " + destination);
     }
 
     /**
@@ -55,6 +69,16 @@ public class CommandUtils {
         final var process = cp(source, destination);
         process.waitFor();
         return rm(source);
+    }
+
+    public static String sha256sum(@NonNull String filePath) throws IOException {
+        final var exec = Runtime.getRuntime().exec("sha256sum " + filePath);
+        final var info = CharStreams.toString(new InputStreamReader(exec.getInputStream()));
+        final var infoSplit = info.split(" ");
+        if (infoSplit.length <= 1) {
+            throw new IOException("获取sha256sum失败， " + info);
+        }
+        return infoSplit[0];
     }
 
 }

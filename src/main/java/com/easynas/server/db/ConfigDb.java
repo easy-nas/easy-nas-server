@@ -73,7 +73,6 @@ public class ConfigDb extends BaseDb {
         return config.getFileSavePaths().computeIfAbsent("backup", t -> new ArrayList<>());
     }
 
-
     public void setGeneralInformationPath(@NonNull String path) {
         config.getGeneralInformationPath().put("master", path);
         persist(config, filePath);
