@@ -1,14 +1,16 @@
 package com.easynas.server.task;
 
-import com.easynas.server.service.ConfigService;
 import com.easynas.server.service.FileService;
-import static java.util.stream.Collectors.toMap;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * 备份任务
@@ -19,13 +21,14 @@ import java.util.Map;
 @Component
 public class BackupSync {
 
-    private final ConfigService configDao;
     private final FileService fileService;
+    private final FileService fileBackupService;
 
     @Autowired
-    public BackupSync(ConfigService configDao, FileService fileService) {
-        this.configDao = configDao;
+    public BackupSync(@Qualifier("fileService") @NonNull FileService fileService,
+                      @Qualifier("fileBackupService") @NonNull FileService fileBackupService) {
         this.fileService = fileService;
+        this.fileBackupService = fileBackupService;
     }
 
     @Scheduled(cron = "0 0,30 * * * ?")
@@ -34,12 +37,12 @@ public class BackupSync {
         if (needBackup.isEmpty()) {
             return;
         }
-        needBackup.forEach(fileService::backupFile);
+        needBackup.forEach(fileBackupService::saveFile);
     }
 
     private Map<String, String> getNeedBackupFiles() {
-        final var allFilePath = configDao.getAllFilePath();
-        final var allFilePathBackup = configDao.getAllFilePathBackup();
+        final var allFilePath = fileService.getAllFilePath();
+        final var allFilePathBackup = fileBackupService.getAllFilePath();
         return allFilePath.entrySet().stream()
                 .filter(t -> !allFilePathBackup.containsKey(t.getKey()))
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));

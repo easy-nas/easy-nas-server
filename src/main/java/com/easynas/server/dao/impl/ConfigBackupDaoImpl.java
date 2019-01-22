@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.FileNotFoundException;
 import java.util.List;
-import javax.annotation.PostConstruct;
 
 /**
  * 修改读取config配置
@@ -18,15 +17,14 @@ import javax.annotation.PostConstruct;
 @Repository("configBackupDao")
 public class ConfigBackupDaoImpl extends BaseConfigDao {
 
-    @Override
-    @PostConstruct
-    protected void init() throws FileNotFoundException {
-        super.init();
+
+    protected ConfigBackupDaoImpl() throws FileNotFoundException {
     }
 
     /**
      * 得到通用信息的保存路径
      */
+    @Override
     public String getGeneralInformationPath() {
         return config.getGeneralInformationPath().get("backup");
     }
@@ -36,15 +34,18 @@ public class ConfigBackupDaoImpl extends BaseConfigDao {
      *
      * @return 路径有多个，所以返回list
      */
+    @Override
     public List<String> getFileSavePaths() {
         return config.getFileSavePaths().get("backup");
     }
 
+    @Override
     public void setGeneralInformationPath(@NonNull String path) {
         config.getGeneralInformationPath().put("backup", path);
         persist(config, filePath);
     }
 
+    @Override
     public void setFileSavePath(@NonNull List<String> paths) {
         config.getFileSavePaths().put("backup", paths);
         persist(config, filePath);

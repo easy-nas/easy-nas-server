@@ -1,16 +1,17 @@
-package com.easynas.server.service.impl.master;
+package com.easynas.server.service.impl;
 
 import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.dao.UserDao;
+import com.easynas.server.service.AdminService;
 import com.easynas.server.service.ConfigService;
 import com.easynas.server.service.FileService;
-import com.easynas.server.service.AdminService;
 import com.easynas.server.util.CommandUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,20 +25,38 @@ import static com.easynas.server.util.FileUtils.scatterMove;
 import static java.util.stream.Collectors.toList;
 
 /**
- * @author liangyongrui
+ * @author liangyongrui@xiaomi.com
+ * @date 19-1-22 下午6:21
  */
 @Slf4j
-@Service("adminService")
+@Component
 public class AdminServiceImpl implements AdminService {
+
+    @Bean("adminService")
+    @Autowired
+    public AdminService getAdminService(
+            @NonNull UserDao userDao,
+            @Qualifier("configService") @NonNull ConfigService configService,
+            @Qualifier("fileService") @NonNull FileService fileService) {
+        return new AdminServiceImpl(userDao, configService, fileService);
+    }
+
+    @Bean("adminBackupService")
+    @Autowired
+    public AdminService getAdminBackupService(
+            @NonNull UserDao userDao,
+            @Qualifier("configBackupService") @NonNull ConfigService configService,
+            @Qualifier("fileBackupService") @NonNull FileService fileService) {
+        return new AdminServiceImpl(userDao, configService, fileService);
+    }
 
     private final ConfigService configService;
     private final FileService fileService;
     private final UserDao userDao;
 
-    @Autowired
     public AdminServiceImpl(@NonNull UserDao userDao,
-                            @Qualifier("configService") @NonNull ConfigService configService,
-                            @Qualifier("fileService") @NonNull FileService fileService) {
+                            @NonNull ConfigService configService,
+                            @NonNull FileService fileService) {
         this.configService = configService;
         this.fileService = fileService;
         this.userDao = userDao;

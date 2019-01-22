@@ -1,7 +1,7 @@
 package com.easynas.server.ftp;
 
-import com.easynas.server.service.ConfigService;
 import com.easynas.server.model.User;
+import com.easynas.server.service.ConfigService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ftpserver.ftplet.FtpException;
@@ -11,6 +11,7 @@ import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,11 +33,11 @@ public class FtpConfig {
 
     private UserManager userManager;
 
-    private final ConfigService configDao;
+    private final ConfigService configService;
 
     @Autowired
-    public FtpConfig(@NonNull ConfigService configDao) {
-        this.configDao = configDao;
+    public FtpConfig(@Qualifier("configService") @NonNull ConfigService configService) {
+        this.configService = configService;
     }
 
     @PostConstruct
@@ -61,7 +62,7 @@ public class FtpConfig {
         final var username = user.getUsername();
         baseUser.setName(username);
         baseUser.setPassword(user.getPasswordHash());
-        baseUser.setHomeDirectory(configDao.getUserDataSavePath(username));
+        baseUser.setHomeDirectory(configService.getUserDataSavePath(username));
         baseUser.setAuthorities(List.of(new WritePermission()));
         try {
             userManager.save(baseUser);

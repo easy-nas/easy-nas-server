@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,10 +27,15 @@ import java.util.function.Function;
 public class AdminController {
 
     private final AdminService adminService;
+    private final AdminService adminBackupService;
 
     @Autowired
-    public AdminController(@NonNull AdminService adminService) {
+    public AdminController(
+            @Qualifier("adminService") @NonNull AdminService adminService,
+            @Qualifier("adminBackupService") @NonNull AdminService adminBackupService
+    ) {
         this.adminService = adminService;
+        this.adminBackupService = adminBackupService;
     }
 
     @ApiOperation(value = "设置通用信息保存路径", notes = "失败返回错误")
@@ -41,7 +47,7 @@ public class AdminController {
     @ApiOperation(value = "设置通用信息备份路径", notes = "失败返回错误")
     @PostMapping("set-general-information-path-backup")
     public Result<String> setGeneralInformationPathBackup(@RequestBody PathRequest pathRequest) {
-        return dealPath(pathRequest.getPath(), adminService::setGeneralInformationPathBackup);
+        return dealPath(pathRequest.getPath(), adminBackupService::setGeneralInformationPath);
     }
 
     @ApiOperation(value = "添加文件保存路径", notes = "失败返回错误")
@@ -53,7 +59,7 @@ public class AdminController {
     @ApiOperation(value = "添加文件备份路径", notes = "失败返回错误")
     @PostMapping("add-file-save-path-backup")
     public Result<String> addFileSavePathBackup(@RequestBody PathRequest pathRequest) {
-        return dealPath(pathRequest.getPath(), adminService::addFileSavePathBackup);
+        return dealPath(pathRequest.getPath(), adminBackupService::addFileSavePath);
     }
 
     @ApiOperation(value = "删除文件保存路径", notes = "失败返回错误")
@@ -65,7 +71,7 @@ public class AdminController {
     @ApiOperation(value = "删除文件备份路径", notes = "失败返回错误")
     @PostMapping("delete-file-save-path-backup")
     public Result<String> deleteFileSavePathBackup(@RequestBody PathRequest pathRequest) {
-        return dealPath(pathRequest.getPath(), adminService::deleteFileSavePathBackup);
+        return dealPath(pathRequest.getPath(), adminBackupService::deleteFileSavePath);
     }
 
     @ApiOperation(value = "WIP:交换文件存储路径和备份路径", notes = "失败返回错误")

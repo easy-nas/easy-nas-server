@@ -19,7 +19,7 @@ public abstract class BaseConfigDao extends BaseDao implements ConfigDao {
     protected File filePath;
     protected AdminConfig config;
 
-    protected void init() throws FileNotFoundException {
+    protected  BaseConfigDao() throws FileNotFoundException {
         filePath = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "admin-config.yml");
         log.info("config path: " + filePath.getAbsolutePath());
         final var yaml = new Yaml();

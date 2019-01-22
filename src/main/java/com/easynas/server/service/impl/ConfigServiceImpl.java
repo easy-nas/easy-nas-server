@@ -1,25 +1,36 @@
-package com.easynas.server.service.impl.master;
+package com.easynas.server.service.impl;
 
 import com.easynas.server.dao.ConfigDao;
 import com.easynas.server.service.ConfigService;
-import com.easynas.server.service.base.BaseConfigService;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 /**
  * @author liangyongrui@xiaomi.com
- * @date 19-1-22 下午4:46
+ * @date 19-1-22 下午4:45
  */
-@Slf4j
-@Service("configService")
-public class ConfigServiceImpl extends BaseConfigService implements ConfigService {
+@Service
+public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
-    protected ConfigServiceImpl(@Qualifier("configDao") @NonNull ConfigDao configDao) {
-        super(configDao);
+    @Bean("configService")
+    public ConfigService getConfigService(@Qualifier("configDao") @NonNull ConfigDao configDao) {
+        return new ConfigServiceImpl(configDao);
+    }
+
+    @Autowired
+    @Bean("configBackupService")
+    public ConfigService getConfigBackupService(@Qualifier("configDao") @NonNull ConfigDao configDao) {
+        return new ConfigServiceImpl(configDao);
+    }
+
+    private final ConfigDao configDao;
+
+    protected ConfigServiceImpl(@NonNull ConfigDao configDao) {
+        this.configDao = configDao;
     }
 
     @Override
