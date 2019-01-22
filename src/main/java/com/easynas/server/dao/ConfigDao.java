@@ -1,8 +1,6 @@
 package com.easynas.server.dao;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -15,6 +13,8 @@ public interface ConfigDao {
 
     /**
      * 得到通用信息的保存路径
+     *
+     * @return path
      */
     String getGeneralInformationPath();
 

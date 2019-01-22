@@ -3,7 +3,6 @@ package com.easynas.server.config;
 import com.easynas.server.handler.LockInterceptor;
 import com.easynas.server.handler.LogInterceptor;
 import com.easynas.server.handler.LoginCheckInterceptor;
-import lombok.NonNull;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

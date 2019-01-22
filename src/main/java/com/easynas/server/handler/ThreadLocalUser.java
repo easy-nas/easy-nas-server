@@ -8,6 +8,7 @@ import com.easynas.server.model.User;
  * @author liangyongrui
  */
 public class ThreadLocalUser {
+
     private static ThreadLocal<User> threadLocal = new ThreadLocal<>();
 
     public static void setUser(User user) {

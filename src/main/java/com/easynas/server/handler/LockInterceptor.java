@@ -23,6 +23,7 @@ public class LockInterceptor implements HandlerInterceptor {
 
     private static final String LOCK_ERROR_JSON = toJsonString(Map.of(
             "code", "lock_error", "message", "管理员正在升级系统，请稍后再试"));
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
         if (handler instanceof ResourceHttpRequestHandler) {

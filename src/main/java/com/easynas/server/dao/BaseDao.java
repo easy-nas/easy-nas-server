@@ -16,11 +16,11 @@ public abstract class BaseDao {
     /**
      * 持久化配置
      */
-    protected <T> void persist(@NonNull T yamlObject,@NonNull String filePath) {
+    <T> void persist(@NonNull T yamlObject, @NonNull String filePath) {
         persist(yamlObject, new File(filePath));
     }
 
-   protected  <T> void persist(@NonNull T yamlObject,@NonNull File file) {
+    protected <T> void persist(@NonNull T yamlObject, @NonNull File file) {
         final var yaml = new Yaml();
         try {
             yaml.dump(yamlObject, new FileWriter(file));
