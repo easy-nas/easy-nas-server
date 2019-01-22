@@ -1,5 +1,6 @@
 package com.easynas.server.db;
 
+import com.easynas.server.ftp.FtpConfig;
 import com.easynas.server.model.User;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -21,13 +22,15 @@ import java.util.*;
 @Slf4j
 public class UserDb extends BaseDb {
     private final ConfigDb configDb;
+    private final FtpConfig ftpConfig;
 
     private Map<String, User> allUser = new HashMap<>();
     private static final String USER_INFO_YML = "user-info.yml";
 
     @Autowired
-    public UserDb(@NonNull ConfigDb configDb) {
+    public UserDb(@NonNull ConfigDb configDb, @NonNull FtpConfig ftpConfig) {
         this.configDb = configDb;
+        this.ftpConfig = ftpConfig;
         initAllUser();
     }
 
@@ -48,6 +51,7 @@ public class UserDb extends BaseDb {
                 final var userYml = userDirectory.getAbsolutePath() + "/" + USER_INFO_YML;
                 User user = new Yaml().loadAs(new FileInputStream(userYml), User.class);
                 allUser.put(user.getUsername(), user);
+                ftpConfig.addUser(user);
             }
         } catch (IOException e) {
             log.error("初始化用户信息失败,", e);
@@ -76,14 +80,11 @@ public class UserDb extends BaseDb {
         }
         allUser.put(username, user);
         persist(user, userInfo);
+        ftpConfig.addUser(user);
         return Optional.of(user);
     }
 
     public Optional<User> getUser(@NonNull String username) {
         return Optional.ofNullable(allUser.get(username));
-    }
-
-    public Collection<User> getAllUser() {
-        return allUser.values();
     }
 }
