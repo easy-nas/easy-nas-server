@@ -1,11 +1,12 @@
 package com.easynas.server.db;
 
-import com.easynas.server.model.ConfigModel;
+import com.easynas.server.model.AdminConfig;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.annotation.PostConstruct;
@@ -25,20 +26,15 @@ import java.util.Optional;
 @Component
 public class ConfigDb extends BaseDb {
 
-    @Value("${workConfigPath}")
-    private String workConfigPath;
-    @Value("${project.name}")
-    private String projectName;
-
-    private String filePath;
-    private ConfigModel config;
+    private File filePath;
+    private AdminConfig config;
 
     @PostConstruct
     private void init() throws FileNotFoundException {
-        filePath = new File("").getAbsolutePath() + "/config/admin-config.yml";
-        log.info("config path: " + filePath);
+        filePath = ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX + "admin-config.yml");
+        log.info("config path: " + filePath.getAbsolutePath());
         final var yaml = new Yaml();
-        config = yaml.loadAs(new FileInputStream(filePath), ConfigModel.class);
+        config = yaml.loadAs(new FileInputStream(filePath), AdminConfig.class);
     }
 
     /**

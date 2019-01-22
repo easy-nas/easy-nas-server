@@ -1,0 +1,8 @@
+!!com.easynas.server.model.AdminConfig
+fileSavePaths:
+  master: [easy-nas-data/file]
+  backup: null
+generalInformationPath: {
+  master: easy-nas-data/general-information/,
+  backup: null
+}

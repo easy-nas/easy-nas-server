@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @ToString
 @Data
-public class ConfigModel {
+public class AdminConfig {
 
     private Map<String, String> generalInformationPath;
     private Map<String, List<String>> fileSavePaths;

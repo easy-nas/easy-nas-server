@@ -68,6 +68,19 @@ public class AdminController {
         return dealPath(pathRequest.getPath(), adminService::deleteFileSavePathBackup);
     }
 
+    @ApiOperation(value = "WIP:交换文件存储路径和备份路径", notes = "失败返回错误")
+    @PostMapping("swap-file-path-and-backup-path")
+    public Result<String> swapFilePathAndBackupPath() {
+        //todo
+        return Result.success();
+    }
+
+    @ApiOperation(value = "WIP:交换通用信息保存路径和备份路径", notes = "失败返回错误")
+    @PostMapping("swap-general-information-path-and-backup-path")
+    public Result<String> swapGeneralInformationPathAndBackupPath() {
+        //todo
+        return Result.success();
+    }
 
     private Result<String> dealPath(String path, Function<String, Optional<String>> function) {
         if (path == null || path.strip().length() == 0) {

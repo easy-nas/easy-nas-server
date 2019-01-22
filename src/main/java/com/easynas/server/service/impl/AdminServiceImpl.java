@@ -2,6 +2,7 @@ package com.easynas.server.service.impl;
 
 import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.dao.ConfigDao;
+import com.easynas.server.dao.UserDao;
 import com.easynas.server.db.UserDb;
 import com.easynas.server.service.AdminService;
 import com.easynas.server.util.CommandUtils;
@@ -29,12 +30,12 @@ import static java.util.stream.Collectors.toList;
 public class AdminServiceImpl implements AdminService {
 
     private final ConfigDao configDao;
-    private final UserDb userDb;
+    private final UserDao userDao;
 
     @Autowired
-    public AdminServiceImpl(@NonNull ConfigDao configDao, @NonNull UserDb userDb) {
+    public AdminServiceImpl(@NonNull ConfigDao configDao, @NonNull UserDao userDao) {
         this.configDao = configDao;
-        this.userDb = userDb;
+        this.userDao = userDao;
     }
 
     @Override
@@ -119,7 +120,7 @@ public class AdminServiceImpl implements AdminService {
             log.error(errorMessage, e);
             return Optional.of(errorMessage);
         }
-        userDb.initAllUser();
+        userDao.initAllUser();
         return Optional.empty();
     }
 
