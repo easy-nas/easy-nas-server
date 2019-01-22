@@ -1,20 +1,12 @@
 package com.easynas.server.dao.impl;
 
 import com.easynas.server.dao.BaseConfigDao;
-import com.easynas.server.dao.BaseDao;
-import com.easynas.server.model.AdminConfig;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.springframework.util.ResourceUtils;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.annotation.PostConstruct;
 
 /**
@@ -23,8 +15,8 @@ import javax.annotation.PostConstruct;
  * @author liangyongrui
  */
 @Slf4j
-@Repository("configDao")
-public class ConfigDaoImpl extends BaseConfigDao {
+@Repository("configBackupDao")
+public class ConfigBackupDaoImpl extends BaseConfigDao {
 
     @Override
     @PostConstruct
@@ -36,7 +28,7 @@ public class ConfigDaoImpl extends BaseConfigDao {
      * 得到通用信息的保存路径
      */
     public String getGeneralInformationPath() {
-        return config.getGeneralInformationPath().get("master");
+        return config.getGeneralInformationPath().get("backup");
     }
 
     /**
@@ -45,16 +37,16 @@ public class ConfigDaoImpl extends BaseConfigDao {
      * @return 路径有多个，所以返回list
      */
     public List<String> getFileSavePaths() {
-        return config.getFileSavePaths().get("master");
+        return config.getFileSavePaths().get("backup");
     }
 
     public void setGeneralInformationPath(@NonNull String path) {
-        config.getGeneralInformationPath().put("master", path);
+        config.getGeneralInformationPath().put("backup", path);
         persist(config, filePath);
     }
 
     public void setFileSavePath(@NonNull List<String> paths) {
-        config.getFileSavePaths().put("master", paths);
+        config.getFileSavePaths().put("backup", paths);
         persist(config, filePath);
     }
 }

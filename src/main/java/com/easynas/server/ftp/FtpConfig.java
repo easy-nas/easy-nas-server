@@ -1,7 +1,6 @@
 package com.easynas.server.ftp;
 
-import com.easynas.server.dao.ConfigDao;
-import com.easynas.server.db.UserDb;
+import com.easynas.server.service.ConfigService;
 import com.easynas.server.model.User;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +32,10 @@ public class FtpConfig {
 
     private UserManager userManager;
 
-    private final ConfigDao configDao;
+    private final ConfigService configDao;
 
     @Autowired
-    public FtpConfig(@NonNull ConfigDao configDao) {
+    public FtpConfig(@NonNull ConfigService configDao) {
         this.configDao = configDao;
     }
 

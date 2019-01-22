@@ -1,13 +1,12 @@
 package com.easynas.server.service.impl;
 
-import com.easynas.server.dao.LoginDao;
+import com.easynas.server.service.LoginDao;
 import com.easynas.server.model.User;
 import com.easynas.server.model.login.request.LoginRequest;
 import com.easynas.server.service.LoginService;
 import com.easynas.server.util.HashUtils;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

@@ -1,7 +1,7 @@
-package com.easynas.server.dao.impl;
+package com.easynas.server.service.impl;
 
-import com.easynas.server.dao.LoginDao;
-import com.easynas.server.db.UserDb;
+import com.easynas.server.service.LoginDao;
+import com.easynas.server.dao.UserDao;
 import com.easynas.server.model.User;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,10 @@ import java.util.Optional;
 @Repository
 public class LoginDaoImpl implements LoginDao {
 
-    private final UserDb userDb;
+    private final UserDao userDb;
 
     @Autowired
-    public LoginDaoImpl(@NonNull UserDb userDb) {
+    public LoginDaoImpl(@NonNull UserDao userDb) {
         this.userDb = userDb;
     }
 

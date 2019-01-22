@@ -1,4 +1,4 @@
-package com.easynas.server.db;
+package com.easynas.server.dao;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -12,15 +12,15 @@ import java.io.IOException;
  * @author liangyongrui
  */
 @Slf4j
-public abstract class BaseDb {
+public abstract class BaseDao {
     /**
      * 持久化配置
      */
-    <T> void persist(@NonNull T yamlObject,@NonNull String filePath) {
+    protected <T> void persist(@NonNull T yamlObject,@NonNull String filePath) {
         persist(yamlObject, new File(filePath));
     }
 
-    <T> void persist(@NonNull T yamlObject,@NonNull File file) {
+   protected  <T> void persist(@NonNull T yamlObject,@NonNull File file) {
         final var yaml = new Yaml();
         try {
             yaml.dump(yamlObject, new FileWriter(file));

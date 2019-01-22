@@ -1,14 +1,15 @@
-package com.easynas.server.service.impl;
+package com.easynas.server.service.impl.master;
 
 import com.easynas.server.config.GlobalStatus;
-import com.easynas.server.dao.ConfigDao;
 import com.easynas.server.dao.UserDao;
-import com.easynas.server.db.UserDb;
+import com.easynas.server.service.ConfigService;
+import com.easynas.server.service.FileService;
 import com.easynas.server.service.AdminService;
 import com.easynas.server.util.CommandUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -25,16 +26,20 @@ import static java.util.stream.Collectors.toList;
 /**
  * @author liangyongrui
  */
-@Service
 @Slf4j
+@Service("adminService")
 public class AdminServiceImpl implements AdminService {
 
-    private final ConfigDao configDao;
+    private final ConfigService configService;
+    private final FileService fileService;
     private final UserDao userDao;
 
     @Autowired
-    public AdminServiceImpl(@NonNull ConfigDao configDao, @NonNull UserDao userDao) {
-        this.configDao = configDao;
+    public AdminServiceImpl(@NonNull UserDao userDao,
+                            @Qualifier("configService") @NonNull ConfigService configService,
+                            @Qualifier("fileService") @NonNull FileService fileService) {
+        this.configService = configService;
+        this.fileService = fileService;
         this.userDao = userDao;
     }
 
@@ -43,44 +48,19 @@ public class AdminServiceImpl implements AdminService {
         if (new File(path).exists()) {
             return Optional.of("该路径已存在！");
         }
-        return setGeneralInformationPath(configDao.getGeneralInformationPath(), path,
-                configDao::setGeneralInformationPath);
-    }
-
-
-    @Override
-    public Optional<String> setGeneralInformationPathBackup(@NonNull String path) {
-        if (new File(path).exists()) {
-            return Optional.of("该路径已存在！");
-        }
-        if (configDao.getGeneralInformationPathBackup().isEmpty()) {
-            configDao.setGeneralInformationPathBackup(path);
-            return Optional.empty();
-        }
-        return setGeneralInformationPath(configDao.getGeneralInformationPathBackup().get(), path,
-                configDao::setGeneralInformationPathBackup);
+        return setGeneralInformationPath(configService.getGeneralInformationPath(), path,
+                configService::setGeneralInformationPath);
     }
 
     @Override
     public Optional<String> addFileSavePath(@NonNull String path) {
-        return addFileSavePath(configDao.getFileSavePaths(), path, configDao::setFileSavePath);
-    }
-
-    @Override
-    public Optional<String> addFileSavePathBackup(@NonNull String path) {
-        return addFileSavePath(configDao.getFileSavePathsBackup(), path, configDao::setFileSavePathBackup);
+        return addFileSavePath(fileService.getFileSavePaths(), path, fileService::setFileSavePath);
     }
 
     @Override
     public Optional<String> deleteFileSavePath(@NonNull String path) {
-        return deleteFileSavePath(path, configDao.getFileSavePaths(), configDao::setFileSavePath);
+        return deleteFileSavePath(path, fileService.getFileSavePaths(), fileService::setFileSavePath);
     }
-
-    @Override
-    public Optional<String> deleteFileSavePathBackup(@NonNull String path) {
-        return deleteFileSavePath(path, configDao.getFileSavePathsBackup(), configDao::setFileSavePathBackup);
-    }
-
 
     private Optional<String> addFileSavePath(@NonNull List<String> origin, @NonNull String adder,
                                              @NonNull Consumer<List<String>> fileSavePathConsumer) {
@@ -100,7 +80,6 @@ public class AdminServiceImpl implements AdminService {
         fileSavePathConsumer.accept(origin);
         return Optional.empty();
     }
-
 
     private Optional<String> setGeneralInformationPath(@NonNull String source, @NonNull String destination,
                                                        @NonNull Consumer<String> destinationConsumer) {

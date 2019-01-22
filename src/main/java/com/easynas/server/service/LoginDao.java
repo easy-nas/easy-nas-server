@@ -1,4 +1,4 @@
-package com.easynas.server.dao;
+package com.easynas.server.service;
 
 import com.easynas.server.model.User;
 import lombok.NonNull;
