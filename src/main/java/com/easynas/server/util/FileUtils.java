@@ -1,6 +1,5 @@
 package com.easynas.server.util;
 
-
 import com.easynas.server.model.Pair;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,6 @@ public class FileUtils {
     }
 
     /**
-     * todo test
      * 判断是否可以把 fromDirectory 中的文件，移动到 toDirectories 中
      */
     private static boolean canMove(@NonNull File[] needMoveFiles, @NonNull List<File> toDirectories) {
@@ -46,8 +44,6 @@ public class FileUtils {
     }
 
     /**
-     * todo test
-     * <p>
      * 把 fromDirectory 中的文件，移动到 toDirectories 中
      *
      * @return 成功返回true

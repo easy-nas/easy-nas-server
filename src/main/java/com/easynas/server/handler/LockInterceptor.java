@@ -30,7 +30,7 @@ public class LockInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        if (GlobalStatus.isLock()) {
+        if (GlobalStatus.getLock()) {
             response.setCharacterEncoding("UTF-8");
             response.setContentType("application/json");
             response.getWriter().println(LOCK_ERROR_JSON);

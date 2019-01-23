@@ -30,10 +30,8 @@ public class AdminController {
     private final AdminService adminBackupService;
 
     @Autowired
-    public AdminController(
-            @Qualifier("adminService") @NonNull AdminService adminService,
-            @Qualifier("adminBackupService") @NonNull AdminService adminBackupService
-    ) {
+    public AdminController(@Qualifier("adminService") @NonNull AdminService adminService,
+                           @Qualifier("adminBackupService") @NonNull AdminService adminBackupService) {
         this.adminService = adminService;
         this.adminBackupService = adminBackupService;
     }

@@ -1,9 +1,11 @@
 package com.easynas.server.ftp;
 
+import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ftpserver.ftplet.DefaultFtplet;
+import org.apache.ftpserver.ftplet.FtpException;
 import org.apache.ftpserver.ftplet.FtpRequest;
 import org.apache.ftpserver.ftplet.FtpSession;
 import org.apache.ftpserver.ftplet.FtpletResult;
@@ -37,6 +39,13 @@ public class EasyNasFtplet extends DefaultFtplet {
         } catch (InterruptedException e) {
             log.error("建立软链接失败", e);
         }
+        GlobalStatus.uploadCountDecrement();
+        return FtpletResult.DEFAULT;
+    }
+
+    @Override
+    public FtpletResult onUploadStart(FtpSession session, FtpRequest request) {
+        GlobalStatus.uploadCountIncrement();
         return FtpletResult.DEFAULT;
     }
 
@@ -47,10 +56,19 @@ public class EasyNasFtplet extends DefaultFtplet {
             final var homeDirectory = user.getHomeDirectory();
             final var file = new File(homeDirectory);
             if (!file.exists() && !file.mkdirs()) {
-                return FtpletResult.SKIP;
+                return FtpletResult.DISCONNECT;
             }
         }
         return FtpletResult.DEFAULT;
+    }
+
+    @Override
+    public FtpletResult beforeCommand(FtpSession session, FtpRequest request)
+            throws FtpException, IOException {
+        if (GlobalStatus.getLock()) {
+            return FtpletResult.DISCONNECT;
+        }
+        return super.beforeCommand(session, request);
     }
 
 }
