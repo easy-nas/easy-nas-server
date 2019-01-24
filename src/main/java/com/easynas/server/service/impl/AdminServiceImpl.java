@@ -24,8 +24,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-22 下午6:21
+ * @author liangyongrui
  */
 @Slf4j
 @Component

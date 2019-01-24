@@ -16,13 +16,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-21 下午7:58
+ * @author liangyongrui
  */
 @Slf4j
 @Configuration

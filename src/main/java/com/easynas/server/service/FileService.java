@@ -10,8 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-22 下午4:37
+ * @author liangyongrui
  */
 public interface FileService {
 

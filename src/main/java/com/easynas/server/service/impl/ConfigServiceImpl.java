@@ -9,8 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-22 下午4:45
+ * @author liangyongrui
  */
 @Service
 public class ConfigServiceImpl implements ConfigService {

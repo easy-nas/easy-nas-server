@@ -10,8 +10,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 /**
- * @author liangyongrui@xiaomi.com
- * @date 19-1-22 下午6:11
+ * @author liangyongrui
  */
 @Slf4j
 public abstract class BaseConfigDao extends BaseDao implements ConfigDao {
