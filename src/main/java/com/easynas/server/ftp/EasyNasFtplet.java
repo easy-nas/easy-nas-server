@@ -4,11 +4,7 @@ import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ftpserver.ftplet.DefaultFtplet;
-import org.apache.ftpserver.ftplet.FtpException;
-import org.apache.ftpserver.ftplet.FtpRequest;
-import org.apache.ftpserver.ftplet.FtpSession;
-import org.apache.ftpserver.ftplet.FtpletResult;
+import org.apache.ftpserver.ftplet.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +28,7 @@ public class EasyNasFtplet extends DefaultFtplet {
     public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws IOException {
         final var path = session.getUser().getHomeDirectory() + request.getArgument();
         final var sha256sum = CommandUtils.sha256sum(path);
-        final var fileSavePath = fileService.saveFile(path, sha256sum);
+        final var fileSavePath = fileService.saveFile(sha256sum, path);
         final var exec = CommandUtils.lnS(fileSavePath, path);
         try {
             exec.waitFor();
