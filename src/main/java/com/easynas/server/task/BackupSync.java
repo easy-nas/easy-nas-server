@@ -1,6 +1,7 @@
 package com.easynas.server.task;
 
 import com.easynas.server.service.FileService;
+import static java.util.stream.Collectors.toMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
 
 /**
  * 备份任务
@@ -33,6 +32,12 @@ public class BackupSync {
 
     @Scheduled(cron = "0 0,30 * * * ?")
     public void backupSync() {
+        log.info("开始备份");
+        final var fileSaveRoots = fileBackupService.getFileSaveRootPaths();
+        if (fileSaveRoots.isEmpty()) {
+            log.warn("备份路径为空");
+            return;
+        }
         final var needBackup = getNeedBackupFiles();
         if (needBackup.isEmpty()) {
             return;

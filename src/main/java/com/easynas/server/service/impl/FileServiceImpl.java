@@ -3,6 +3,7 @@ package com.easynas.server.service.impl;
 import com.easynas.server.dao.ConfigDao;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
+import static java.util.stream.Collectors.toMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static java.util.stream.Collectors.toMap;
 
 /**
  * @author liangyongrui@xiaomi.com
@@ -47,7 +46,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Map<String, String> getAllFilePath() {
-        return getAllFilePath(getFileSavePaths());
+        return getAllFilePath(getFileSaveRootPaths());
     }
 
     @Override
@@ -56,7 +55,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<String> getFileSavePaths() {
+    public List<String> getFileSaveRootPaths() {
         return configDao.getFileSavePaths();
     }
 

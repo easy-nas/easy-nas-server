@@ -6,6 +6,10 @@ import com.easynas.server.service.AdminService;
 import com.easynas.server.service.ConfigService;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
+import static com.easynas.server.util.CommandUtils.cp;
+import static com.easynas.server.util.CommandUtils.rm;
+import static com.easynas.server.util.FileUtils.scatterMove;
+import static java.util.stream.Collectors.toList;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +22,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
-
-import static com.easynas.server.util.CommandUtils.cp;
-import static com.easynas.server.util.CommandUtils.rm;
-import static com.easynas.server.util.FileUtils.scatterMove;
-import static java.util.stream.Collectors.toList;
 
 /**
  * @author liangyongrui@xiaomi.com
@@ -73,12 +72,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Optional<String> addFileSavePath(@NonNull String path) {
-        return addFileSavePath(fileService.getFileSavePaths(), path, fileService::setFileSavePath);
+        return addFileSavePath(fileService.getFileSaveRootPaths(), path, fileService::setFileSavePath);
     }
 
     @Override
     public Optional<String> deleteFileSavePath(@NonNull String path) {
-        return deleteFileSavePath(path, fileService.getFileSavePaths(), fileService::setFileSavePath);
+        return deleteFileSavePath(path, fileService.getFileSaveRootPaths(), fileService::setFileSavePath);
     }
 
     private Optional<String> addFileSavePath(@NonNull List<String> origin, @NonNull String adder,

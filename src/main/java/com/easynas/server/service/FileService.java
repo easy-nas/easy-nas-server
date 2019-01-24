@@ -1,10 +1,8 @@
 package com.easynas.server.service;
 
-import com.easynas.server.util.CommandUtils;
 import lombok.NonNull;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,7 @@ public interface FileService {
      *
      * @return 获取文件保存路径
      */
-    List<String> getFileSavePaths();
+    List<String> getFileSaveRootPaths();
 
     /**
      * 设置文件保存路径
@@ -37,7 +35,7 @@ public interface FileService {
      * @return path
      */
     default String getMaxFreeSpacePath() {
-        return getFileSavePaths().stream().max((o1, o2) -> {
+        return getFileSaveRootPaths().stream().max((o1, o2) -> {
             final var sub = new File(o1).getFreeSpace() - new File(o2).getFreeSpace();
             return sub == 0L ? 0 : (sub > 0 ? 1 : -1);
         }).orElseThrow();
@@ -57,7 +55,7 @@ public interface FileService {
      * @return 文件保存路径
      */
     default Optional<String> getFilePath(String fileName) {
-        return getFileSavePaths().stream()
+        return getFileSaveRootPaths().stream()
                 .map(File::new)
                 .map(File::listFiles)
                 .filter(Objects::nonNull)
