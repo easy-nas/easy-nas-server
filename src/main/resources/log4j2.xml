@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration status="warn">
     <properties>
-        <Property name="log_path">/home/nas/logs/easy-nas</Property>
+        <Property name="log_path">${sys:user.home}/.easy-nas/logs</Property>
     </properties>
     <appenders>
         <console name="Console" target="SYSTEM_OUT">
