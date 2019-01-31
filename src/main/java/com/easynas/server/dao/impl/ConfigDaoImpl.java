@@ -3,6 +3,8 @@ package com.easynas.server.dao.impl;
 import com.easynas.server.dao.BaseConfigDao;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.io.FileNotFoundException;
@@ -17,7 +19,9 @@ import java.util.List;
 @Repository("configDao")
 public class ConfigDaoImpl extends BaseConfigDao {
 
-    protected ConfigDaoImpl() throws FileNotFoundException {
+    @Autowired
+    protected ConfigDaoImpl(Environment env) throws FileNotFoundException {
+        super(env);
     }
 
     /**
@@ -41,12 +45,12 @@ public class ConfigDaoImpl extends BaseConfigDao {
     @Override
     public void setGeneralInformationPath(@NonNull String path) {
         config.getGeneralInformationPath().put("master", path);
-        persist(config, filePath);
+        persist(config, configFile);
     }
 
     @Override
     public void setFileSavePath(@NonNull List<String> paths) {
         config.getFileSavePaths().put("master", paths);
-        persist(config, filePath);
+        persist(config, configFile);
     }
 }
