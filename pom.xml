@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.easynas</groupId>
-    <artifactId>server</artifactId>
-    <version>0.0.1</version>
+    <artifactId>easy-nas-server</artifactId>
+    <version>0.0.2</version>
     <name>easy-nas-server</name>
     <description>Demo project for Spring Boot</description>
 
