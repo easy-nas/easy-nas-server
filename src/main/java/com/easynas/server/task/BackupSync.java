@@ -4,6 +4,7 @@ import com.easynas.server.service.FileService;
 import static java.util.stream.Collectors.toMap;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,7 +35,7 @@ public class BackupSync {
     public void backupSync() {
         log.info("开始备份");
         final var fileSaveRoots = fileBackupService.getFileSaveRootPaths();
-        if (fileSaveRoots.isEmpty()) {
+        if (fileSaveRoots.stream().noneMatch(Strings::isNotBlank)) {
             log.warn("备份路径为空");
             return;
         }
