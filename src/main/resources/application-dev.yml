@@ -1,0 +1,8 @@
+adminConfigPath: /home/llysrv/easy-nas/admin-config.yml
+
+defaultFileSavePaths:
+  master: /home/llysrv/easy-nas/easy-nas-data/file/
+  backup: null
+defaultGeneralInformationPath:
+  master: /home/llysrv/easy-nas/easy-nas-data/general-information/
+  backup: null

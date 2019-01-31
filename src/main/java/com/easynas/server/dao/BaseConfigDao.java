@@ -29,17 +29,22 @@ public abstract class BaseConfigDao extends BaseDao implements ConfigDao {
         if (configFile.exists()) {
             final var yaml = new Yaml();
             config = yaml.loadAs(new FileInputStream(configFile), AdminConfig.class);
-        } else {
+        }
+        if (config == null) {
+            config = new AdminConfig();
+        }
+        if (config.getFileSavePaths() == null) {
             String defaultFileSavePaths = env.getProperty("defaultFileSavePaths.master", "easy-nas-data/file/");
             String defaultFileSavePathsBackup = env.getProperty("defaultFileSavePaths.backup", "");
-            String defaultGeneralInformationPath = env.getProperty("defaultGeneralInformationPath.master",
-                    "easy-nas-data/general-information/");
-            String defaultGeneralInformationPathBackup = env.getProperty("defaultGeneralInformationPath.backup", "");
-            config = new AdminConfig();
             config.setFileSavePaths(Map.of(
                     "master", List.of(defaultFileSavePaths),
                     "backup", List.of(defaultFileSavePathsBackup)
             ));
+        }
+        if (config.getGeneralInformationPath() == null) {
+            String defaultGeneralInformationPath = env.getProperty("defaultGeneralInformationPath.master",
+                    "easy-nas-data/general-information/");
+            String defaultGeneralInformationPathBackup = env.getProperty("defaultGeneralInformationPath.backup", "");
             config.setGeneralInformationPath(Map.of(
                     "master", defaultGeneralInformationPath,
                     "backup", defaultGeneralInformationPathBackup

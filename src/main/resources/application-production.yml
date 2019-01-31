@@ -1,0 +1,8 @@
+adminConfigPath: /usr/share/easy-nas/admin-config.yml
+
+defaultFileSavePaths:
+  master: /usr/share/easy-nas/easy-nas-data/file/
+  backup: null
+defaultGeneralInformationPath:
+  master: /usr/share/easy-nas/easy-nas-data/general-information/
+  backup: null
