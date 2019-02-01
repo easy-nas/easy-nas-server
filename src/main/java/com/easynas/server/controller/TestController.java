@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api")
 @Slf4j
-public class TodoController {
+public class TestController {
 
     @PostMapping("test-request")
     public Result<TestRequest> todo(@RequestBody TestRequest testRequest) {
