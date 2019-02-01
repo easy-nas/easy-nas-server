@@ -5,18 +5,15 @@
 ### 启动方式：
 
 1. docker 启动（推荐）
-    * 创建镜像：
-    ```shell
-    sudo docker build -t easy-nas/easy-nas-server:0.0.3 https://raw.githubusercontent.com/easy-nas/easy-nas-server/master/Dockerfile
-    ```
-    * 使用docker-compose, 配置供参考
+    * 已经上传到docker hub
+    * docker-compose.yml 供参考
     ```yml
     version: '2.0'
       
     services:
       easy-nas-server:
         restart: unless-stopped
-        image: easy-nas/easy-nas-server:0.0.3
+        image: llysrv/easy-nas-server:0.0.3
         ports:
           - 8888:8888
           - 2222:2222
@@ -34,6 +31,7 @@
 
 ### 配置文件详解：
 这个后期页面也可以设置
+* admin-config.yml
 ```yml
 !!com.easynas.server.model.AdminConfig
 fileSavePaths:
