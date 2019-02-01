@@ -13,7 +13,7 @@
     services:
       easy-nas-server:
         restart: unless-stopped
-        image: llysrv/easy-nas-server:0.0.3
+        image: llysrv/easy-nas-server:0.0.4
         ports:
           - 8888:8888
           - 2222:2222
