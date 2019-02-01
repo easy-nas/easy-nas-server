@@ -1,7 +1,10 @@
 package com.easynas.server.controller;
 
+import com.easynas.server.model.Result;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,9 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class TodoController {
 
-    @PostMapping("todo")
-    public String todo() {
-        log.info("xxx");
-        return "todo22asdf2";
+    @PostMapping("test-request")
+    public Result<TestRequest> todo(@RequestBody TestRequest testRequest) {
+        return Result.success(testRequest);
     }
+}
+
+@ToString
+class TestRequest {
+    public String abc;
+    public String def;
 }
