@@ -32,7 +32,9 @@
 
 
 ### 配置文件详解：
-这个后期页面也可以设置
+* 如果使用docker启动，这个配置文件 建议从docker映射出来。
+* 除了第一次启动之前可以修改它，其他时候均不可修改。
+* 程序中有修改的接口，需要修改去页面修改否则会出现数据不可访问的问题。
 * admin-config.yml
 ```yml
 !!com.easynas.server.model.AdminConfig

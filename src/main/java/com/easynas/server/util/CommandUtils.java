@@ -27,7 +27,7 @@ public class CommandUtils {
      * @return 分区
      * @throws IOException 可能是路径不存在
      */
-    public static String getPathPartition(@NonNull String path) throws IOException {
+    public static String getPathPartition(@NonNull final String path) throws IOException {
         final var exec = Runtime.getRuntime().exec("df " + path);
         final var info = getProcessString(exec);
         final var infoSplit = info.split("\n");
@@ -45,7 +45,7 @@ public class CommandUtils {
      * @throws IOException 没测出什么时候有异常...
      */
     @CanIgnoreReturnValue
-    public static Process rm(@NonNull String path) throws IOException {
+    public static Process rm(@NonNull final String path) throws IOException {
         return Runtime.getRuntime().exec("rm " + path + " -rf");
     }
 
@@ -60,7 +60,7 @@ public class CommandUtils {
      * @throws IOException destination 没有写权限
      */
     @CanIgnoreReturnValue
-    public static Process cp(@NonNull String source, @NonNull String destination) throws IOException {
+    public static Process cp(@NonNull final String source, @NonNull final String destination) throws IOException {
         final var directoryPath = destination.substring(0, destination.lastIndexOf("/"));
         final var fa = new File(directoryPath);
         if (!fa.exists() && !fa.mkdirs()) {
@@ -73,7 +73,7 @@ public class CommandUtils {
      * 软链接
      */
     @CanIgnoreReturnValue
-    public static Process lnS(@NonNull String source, @NonNull String destination) throws IOException {
+    public static Process lnS(@NonNull final String source, @NonNull final String destination) throws IOException {
         return Runtime.getRuntime().exec("ln -sfn " + source + " " + destination);
     }
 
@@ -85,7 +85,7 @@ public class CommandUtils {
      * @return 删除process
      */
     @CanIgnoreReturnValue
-    public static Process cpThenRm(@NonNull String source, @NonNull String destination)
+    public static Process cpThenRm(@NonNull final String source, @NonNull final String destination)
             throws IOException, InterruptedException {
         final var process = cp(source, destination);
         process.waitFor();
@@ -99,7 +99,7 @@ public class CommandUtils {
      * @return sha256sum
      * @throws IOException 地址不存在，地址是目录
      */
-    public static String sha256sum(@NonNull String filePath) throws IOException {
+    public static String sha256sum(@NonNull final String filePath) throws IOException {
         final var exec = Runtime.getRuntime().exec("sha256sum " + filePath);
         final var info = getProcessString(exec);
         final var infoSplit = info.split(" ");
@@ -109,7 +109,7 @@ public class CommandUtils {
         return infoSplit[0];
     }
 
-    public static String getProcessString(Process exec) throws IOException {
+    public static String getProcessString(@NonNull final Process exec) throws IOException {
         return CharStreams.toString(new InputStreamReader(exec.getInputStream()));
     }
 

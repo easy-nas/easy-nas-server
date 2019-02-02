@@ -1,6 +1,6 @@
 package com.easynas.server.model;
 
-import lombok.Data;
+import lombok.Getter;
 
 import javax.annotation.Nullable;
 
@@ -9,28 +9,27 @@ import javax.annotation.Nullable;
  *
  * @author liangyongrui
  */
-@Data
+@Getter
 public class Result<T> {
-    private T data;
-    private int code;
-    private String message;
+    private final T data;
+    private final int code;
+    private final String message;
+
+    private Result(T data, int code, String message) {
+        this.data = data;
+        this.code = code;
+        this.message = message;
+    }
 
     public static <T> Result<T> success() {
         return success(null);
     }
 
     public static <T> Result<T> success(@Nullable T data) {
-        Result<T> result = new Result<>();
-        result.code = 200;
-        result.message = "success";
-        result.data = data;
-        return result;
+        return new Result<>(data, 200, "success");
     }
 
     public static <T> Result<T> fail(@Nullable String message) {
-        Result<T> result = new Result<>();
-        result.code = 400;
-        result.message = message;
-        return result;
+        return new Result<>(null, 400, message);
     }
 }

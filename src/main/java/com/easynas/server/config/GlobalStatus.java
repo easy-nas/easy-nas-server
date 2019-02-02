@@ -20,7 +20,7 @@ public class GlobalStatus {
     /**
      * 用户正在上传的数量
      */
-    private static AtomicInteger uploadCount = new AtomicInteger(0);
+    private static final AtomicInteger UPLOAD_COUNT = new AtomicInteger(0);
 
     public static boolean getLock() {
         return LOCK.get();
@@ -32,7 +32,7 @@ public class GlobalStatus {
      * @param lock LOCK status
      * @return 加锁是否成功
      */
-    public static boolean setLock(boolean lock) {
+    public static boolean setLock(final boolean lock) {
         if (getUploadCount() != 0) {
             return false;
         }
@@ -44,20 +44,20 @@ public class GlobalStatus {
      * 用户上传数量加1
      */
     public static void uploadCountIncrement() {
-        uploadCount.getAndIncrement();
+        UPLOAD_COUNT.getAndIncrement();
     }
 
     /**
      * 用户上传数量减1
      */
     public static void uploadCountDecrement() {
-        uploadCount.getAndDecrement();
+        UPLOAD_COUNT.getAndDecrement();
     }
 
     /**
      * 得到用户正在上传的数量
      */
     private static int getUploadCount() {
-        return uploadCount.get();
+        return UPLOAD_COUNT.get();
     }
 }

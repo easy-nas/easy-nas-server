@@ -40,7 +40,7 @@ public class SwaggerConfig {
     }
 
     private List<Parameter> operationParameters() {
-        Parameter parameter = new ParameterBuilder()
+        final var parameter = new ParameterBuilder()
                 .name("access-token")
                 .description("登录验证")
                 .modelRef(new ModelRef("string"))

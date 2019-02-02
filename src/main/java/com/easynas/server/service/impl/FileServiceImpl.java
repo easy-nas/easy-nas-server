@@ -27,19 +27,19 @@ public class FileServiceImpl implements FileService {
 
     @Bean("fileService")
     @Autowired
-    public FileService getFileService(@Qualifier("configDao") @NonNull ConfigDao configDao) {
+    public FileService getFileService(@Qualifier("configDao") @NonNull final ConfigDao configDao) {
         return new FileServiceImpl(configDao);
     }
 
     @Bean("fileBackupService")
     @Autowired
-    public FileService getFileBackupService(@Qualifier("configBackupDao") @NonNull ConfigDao configDao) {
+    public FileService getFileBackupService(@Qualifier("configBackupDao") @NonNull final ConfigDao configDao) {
         return new FileServiceImpl(configDao);
     }
 
     private final ConfigDao configDao;
 
-    protected FileServiceImpl(@NonNull ConfigDao configDao) {
+    protected FileServiceImpl(@NonNull final ConfigDao configDao) {
         this.configDao = configDao;
     }
 
@@ -49,7 +49,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public String saveFile(@NonNull String fileName, @NonNull String path) {
+    public String saveFile(@NonNull final String fileName, @NonNull final String path) {
         return getFilePath(fileName).orElseGet(() -> saveNewFile(fileName, path));
     }
 
@@ -59,14 +59,14 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void setFileSavePath(@NonNull List<String> path) {
+    public void setFileSavePath(@NonNull final List<String> path) {
         configDao.setFileSavePath(path);
     }
 
     /**
      * 得到root下面的所有文件路径
      */
-    private Map<String, String> getAllFilePath(@NonNull List<String> root) {
+    private Map<String, String> getAllFilePath(@NonNull final List<String> root) {
         return root.stream()
                 .map(File::new)
                 .map(File::listFiles)
@@ -79,11 +79,11 @@ public class FileServiceImpl implements FileService {
     /**
      * 保存一个保存路径中没有的新文件
      */
-    private String saveNewFile(@NonNull String fileName, @NonNull String path) {
+    private String saveNewFile(@NonNull final String fileName, @NonNull final String path) {
         final var directoryPath = getMaxFreeSpacePath();
         final var toPath = directoryPath + "/" + fileName;
         try {
-            final Process exec = CommandUtils.cp(path, toPath);
+            final var exec = CommandUtils.cp(path, toPath);
             exec.waitFor();
         } catch (IOException | InterruptedException e) {
             log.error("保存文件失败", e);

@@ -2,10 +2,6 @@ package com.easynas.server.service;
 
 import lombok.NonNull;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 /**
  * @author liangyongrui
  */
@@ -23,7 +19,7 @@ public interface ConfigService {
      *
      * @param path path
      */
-    void setGeneralInformationPath(@NonNull String path);
+    void setGeneralInformationPath(@NonNull final String path);
 
     /**
      * 用户数据保存路径
@@ -31,5 +27,5 @@ public interface ConfigService {
      * @param username 用户
      * @return path
      */
-    String getUserDataSavePath(@NonNull String username);
+    String getUserDataSavePath(@NonNull final String username);
 }

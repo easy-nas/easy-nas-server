@@ -1,12 +1,14 @@
 package com.easynas.server.model.login.request;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author liangyongrui
  */
-@Data
+@Getter
+@AllArgsConstructor
 public class LoginRequest {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 }

@@ -35,7 +35,7 @@ public class FtpConfig {
     private final ConfigService configService;
 
     @Autowired
-    public FtpConfig(@Qualifier("configService") @NonNull ConfigService configService) {
+    public FtpConfig(@Qualifier("configService") @NonNull final ConfigService configService) {
         this.configService = configService;
     }
 
@@ -56,7 +56,7 @@ public class FtpConfig {
         return factory.createListener();
     }
 
-    public void addUser(User user) {
+    public void addUser(@NonNull final User user) {
         final var baseUser = new BaseUser();
         final var username = user.getUsername();
         baseUser.setName(username);

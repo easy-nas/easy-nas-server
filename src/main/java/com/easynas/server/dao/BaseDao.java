@@ -16,14 +16,13 @@ public abstract class BaseDao {
     /**
      * 持久化配置
      */
-    <T> void persist(@NonNull T yamlObject, @NonNull String filePath) {
+    <T> void persist(@NonNull final T yamlObject, @NonNull final String filePath) {
         persist(yamlObject, new File(filePath));
     }
 
-    protected <T> void persist(@NonNull T yamlObject, @NonNull File file) {
-        final var yaml = new Yaml();
+    protected <T> void persist(@NonNull final T yamlObject, @NonNull final File file) {
         try {
-            yaml.dump(yamlObject, new FileWriter(file));
+            new Yaml().dump(yamlObject, new FileWriter(file));
         } catch (IOException e) {
             log.error("持久化配置失败", e);
         }

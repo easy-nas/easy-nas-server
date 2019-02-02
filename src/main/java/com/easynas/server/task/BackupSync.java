@@ -25,8 +25,8 @@ public class BackupSync {
     private final FileService fileBackupService;
 
     @Autowired
-    public BackupSync(@Qualifier("fileService") @NonNull FileService fileService,
-                      @Qualifier("fileBackupService") @NonNull FileService fileBackupService) {
+    public BackupSync(@Qualifier("fileService") @NonNull final FileService fileService,
+                      @Qualifier("fileBackupService") @NonNull final FileService fileBackupService) {
         this.fileService = fileService;
         this.fileBackupService = fileBackupService;
     }

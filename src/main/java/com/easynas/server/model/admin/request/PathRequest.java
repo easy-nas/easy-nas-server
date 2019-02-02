@@ -1,11 +1,13 @@
 package com.easynas.server.model.admin.request;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * @author liangyongrui
  */
-@Data
+@Getter
+@AllArgsConstructor
 public class PathRequest {
-    private String path;
+    private final String path;
 }

@@ -17,7 +17,7 @@ public interface LoginDao {
      * @param password 密码
      * @return 完整的用户信息
      */
-    Optional<User> getUser(@NonNull String username, @NonNull String password);
+    Optional<User> getUser(@NonNull final String username, @NonNull final String password);
 
     /**
      * 判断用户名是否已经存在
@@ -25,7 +25,7 @@ public interface LoginDao {
      * @param username 需要判断的用户名
      * @return 存在返回true
      */
-    boolean hasUsername(@NonNull String username);
+    boolean hasUsername(@NonNull final String username);
 
     /**
      * 插入用户
@@ -33,6 +33,6 @@ public interface LoginDao {
      * @param user 用户信息
      * @return 失败返回null
      */
-    Optional<User> insertUser(@NonNull User user);
+    Optional<User> insertUser(@NonNull final User user);
 
 }

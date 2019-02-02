@@ -1,6 +1,8 @@
 package com.easynas.server.util;
 
 import com.easynas.server.model.Pair;
+import static com.easynas.server.util.CommandUtils.cpThenRm;
+import static java.util.stream.Collectors.toCollection;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,9 +11,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.PriorityQueue;
-
-import static com.easynas.server.util.CommandUtils.cpThenRm;
-import static java.util.stream.Collectors.toCollection;
 
 /**
  * @author liangyongrui
@@ -25,7 +24,7 @@ public class FileUtils {
     /**
      * 判断是否可以把 fromDirectory 中的文件，移动到 toDirectories 中
      */
-    private static boolean canMove(@NonNull File[] needMoveFiles, @NonNull List<File> toDirectories) {
+    private static boolean canMove(@NonNull final File[] needMoveFiles, @NonNull final List<File> toDirectories) {
         final var checkCount = toDirectories.stream().filter(File::isDirectory).count();
         if (toDirectories.size() == 0 || checkCount != toDirectories.size()) {
             return false;
@@ -48,7 +47,7 @@ public class FileUtils {
      *
      * @return 成功返回true
      */
-    public static boolean scatterMove(@NonNull File fromDirectory, @NonNull List<File> toDirectories) {
+    public static boolean scatterMove(@NonNull final File fromDirectory, @NonNull final List<File> toDirectories) {
         final var needMoveFiles = fromDirectory.listFiles();
         if (needMoveFiles == null) {
             return false;
@@ -84,12 +83,12 @@ public class FileUtils {
      * @param path 绝对路径
      * @return size
      */
-    public static long getPathSize(@NonNull String path) {
+    public static long getPathSize(@NonNull final String path) {
         final var file = new File(path);
         return getPathSize(file);
     }
 
-    public static long getPathSize(@NonNull File file) {
+    public static long getPathSize(@NonNull final File file) {
         if (file.isFile()) {
             return file.length();
         }

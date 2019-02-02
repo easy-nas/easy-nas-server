@@ -1,6 +1,9 @@
 package com.easynas.server.controller;
 
 import com.easynas.server.model.Result;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,13 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @PostMapping("test-request")
-    public Result<TestRequest> todo(@RequestBody TestRequest testRequest) {
+    public Result<TestRequest> todo(@RequestBody @NonNull final TestRequest testRequest) {
         return Result.success(testRequest);
     }
 }
 
 @ToString
+@AllArgsConstructor
+@Getter
 class TestRequest {
-    public String abc;
-    public String def;
+    private final String abc;
+    private final String def;
 }

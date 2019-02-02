@@ -26,7 +26,7 @@ public interface FileService {
      *
      * @param path path
      */
-    void setFileSavePath(@NonNull List<String> path);
+    void setFileSavePath(@NonNull final List<String> path);
 
     /**
      * 得到剩余空间最大的文件保存路径
@@ -53,7 +53,7 @@ public interface FileService {
      * @param fileName 文件名
      * @return 文件保存路径
      */
-    default Optional<String> getFilePath(String fileName) {
+    default Optional<String> getFilePath(@NonNull final String fileName) {
         return getFileSaveRootPaths().stream()
                 .map(File::new)
                 .map(File::listFiles)
@@ -72,5 +72,5 @@ public interface FileService {
      * @param path 需要保存的文件路径
      * @return 保存地址的路径
      */
-    String saveFile(String fileName, String path);
+    String saveFile(@NonNull final String fileName, @NonNull final String path);
 }

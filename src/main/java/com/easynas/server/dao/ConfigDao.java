@@ -30,13 +30,13 @@ public interface ConfigDao {
      *
      * @param path path
      */
-    void setGeneralInformationPath(@NonNull String path);
+    void setGeneralInformationPath(@NonNull final String path);
 
     /**
      * 设置文件保存路径
      *
      * @param paths paths
      */
-    void setFileSavePath(@NonNull List<String> paths);
+    void setFileSavePath(@NonNull final List<String> paths);
 
 }

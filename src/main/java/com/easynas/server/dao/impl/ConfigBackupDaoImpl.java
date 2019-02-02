@@ -20,7 +20,7 @@ import java.util.List;
 public class ConfigBackupDaoImpl extends BaseConfigDao {
 
     @Autowired
-    protected ConfigBackupDaoImpl(Environment env) throws FileNotFoundException {
+    protected ConfigBackupDaoImpl(@NonNull final Environment env) throws FileNotFoundException {
         super(env);
     }
 
@@ -43,13 +43,13 @@ public class ConfigBackupDaoImpl extends BaseConfigDao {
     }
 
     @Override
-    public void setGeneralInformationPath(@NonNull String path) {
+    public void setGeneralInformationPath(@NonNull final String path) {
         config.getGeneralInformationPath().put("backup", path);
         persist(config, configFile);
     }
 
     @Override
-    public void setFileSavePath(@NonNull List<String> paths) {
+    public void setFileSavePath(@NonNull final List<String> paths) {
         config.getFileSavePaths().put("backup", paths);
         persist(config, configFile);
     }

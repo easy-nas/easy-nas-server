@@ -1,6 +1,7 @@
 package com.easynas.server.handler;
 
 import com.easynas.server.model.User;
+import lombok.NonNull;
 
 /**
  * 获取当前线程登录的用户
@@ -11,7 +12,7 @@ public class ThreadLocalUser {
 
     private static ThreadLocal<User> threadLocal = new ThreadLocal<>();
 
-    public static void setUser(User user) {
+    public static void setUser(@NonNull final User user) {
         threadLocal.set(user);
     }
 

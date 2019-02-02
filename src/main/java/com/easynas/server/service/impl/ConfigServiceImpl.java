@@ -16,19 +16,19 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Autowired
     @Bean("configService")
-    public ConfigService getConfigService(@Qualifier("configDao") @NonNull ConfigDao configDao) {
+    public ConfigService getConfigService(@Qualifier("configDao") @NonNull final ConfigDao configDao) {
         return new ConfigServiceImpl(configDao);
     }
 
     @Autowired
     @Bean("configBackupService")
-    public ConfigService getConfigBackupService(@Qualifier("configDao") @NonNull ConfigDao configDao) {
+    public ConfigService getConfigBackupService(@Qualifier("configDao") @NonNull final ConfigDao configDao) {
         return new ConfigServiceImpl(configDao);
     }
 
     private final ConfigDao configDao;
 
-    protected ConfigServiceImpl(@NonNull ConfigDao configDao) {
+    protected ConfigServiceImpl(@NonNull final ConfigDao configDao) {
         this.configDao = configDao;
     }
 
@@ -38,7 +38,7 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public void setGeneralInformationPath(@NonNull String s) {
+    public void setGeneralInformationPath(@NonNull final String s) {
         configDao.setGeneralInformationPath(s);
     }
 
@@ -46,7 +46,7 @@ public class ConfigServiceImpl implements ConfigService {
      * 用户数据保存路径
      */
     @Override
-    public String getUserDataSavePath(@NonNull String username) {
+    public String getUserDataSavePath(@NonNull final String username) {
         return configDao.getGeneralInformationPath() + "/" + username + "/data";
     }
 }

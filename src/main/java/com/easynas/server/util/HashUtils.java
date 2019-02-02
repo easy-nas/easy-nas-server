@@ -13,7 +13,7 @@ public class HashUtils {
     private HashUtils() {
     }
 
-    public static String hash(@NonNull String s) {
+    public static String hash(@NonNull final String s) {
         return Hashing.sha256().hashUnencodedChars(s + SALT).toString();
     }
 }

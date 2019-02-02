@@ -33,18 +33,18 @@ public class AdminServiceImpl implements AdminService {
     @Bean("adminService")
     @Autowired
     public AdminService getAdminService(
-            @NonNull UserDao userDao,
-            @Qualifier("configService") @NonNull ConfigService configService,
-            @Qualifier("fileService") @NonNull FileService fileService) {
+            @NonNull final UserDao userDao,
+            @Qualifier("configService") @NonNull final ConfigService configService,
+            @Qualifier("fileService") @NonNull final FileService fileService) {
         return new AdminServiceImpl(userDao, configService, fileService);
     }
 
     @Bean("adminBackupService")
     @Autowired
     public AdminService getAdminBackupService(
-            @NonNull UserDao userDao,
-            @Qualifier("configBackupService") @NonNull ConfigService configService,
-            @Qualifier("fileBackupService") @NonNull FileService fileService) {
+            @NonNull final UserDao userDao,
+            @Qualifier("configBackupService") @NonNull final ConfigService configService,
+            @Qualifier("fileBackupService") @NonNull final FileService fileService) {
         return new AdminServiceImpl(userDao, configService, fileService);
     }
 
@@ -52,16 +52,16 @@ public class AdminServiceImpl implements AdminService {
     private final FileService fileService;
     private final UserDao userDao;
 
-    public AdminServiceImpl(@NonNull UserDao userDao,
-                            @NonNull ConfigService configService,
-                            @NonNull FileService fileService) {
+    public AdminServiceImpl(@NonNull final UserDao userDao,
+                            @NonNull final ConfigService configService,
+                            @NonNull final FileService fileService) {
         this.configService = configService;
         this.fileService = fileService;
         this.userDao = userDao;
     }
 
     @Override
-    public Optional<String> setGeneralInformationPath(@NonNull String path) {
+    public Optional<String> setGeneralInformationPath(@NonNull final String path) {
         if (new File(path).exists()) {
             return Optional.of("该路径已存在！");
         }
@@ -70,19 +70,19 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Optional<String> addFileSavePath(@NonNull String path) {
+    public Optional<String> addFileSavePath(@NonNull final String path) {
         return addFileSavePath(fileService.getFileSaveRootPaths(), path, fileService::setFileSavePath);
     }
 
     @Override
-    public Optional<String> deleteFileSavePath(@NonNull String path) {
+    public Optional<String> deleteFileSavePath(@NonNull final String path) {
         return deleteFileSavePath(path, fileService.getFileSaveRootPaths(), fileService::setFileSavePath);
     }
 
-    private Optional<String> addFileSavePath(@NonNull List<String> origin, @NonNull String adder,
-                                             @NonNull Consumer<List<String>> fileSavePathConsumer) {
+    private Optional<String> addFileSavePath(@NonNull final List<String> origin, @NonNull final String adder,
+                                             @NonNull final Consumer<List<String>> fileSavePathConsumer) {
         try {
-            String pathPartition = CommandUtils.getPathPartition(adder);
+            final var pathPartition = CommandUtils.getPathPartition(adder);
             for (String fileSavePath : origin) {
                 String filePartition = CommandUtils.getPathPartition(fileSavePath);
                 if (pathPartition.equals(filePartition)) {
@@ -98,15 +98,15 @@ public class AdminServiceImpl implements AdminService {
         return Optional.empty();
     }
 
-    private Optional<String> setGeneralInformationPath(@NonNull String source, @NonNull String destination,
-                                                       @NonNull Consumer<String> destinationConsumer) {
+    private Optional<String> setGeneralInformationPath(@NonNull final String source, @NonNull final String destination,
+                                                       @NonNull final Consumer<String> destinationConsumer) {
 
         try {
             if (!GlobalStatus.setLock(true)) {
                 log.error("加锁失败");
                 throw new RuntimeException();
             }
-            Process exec = cp(source, destination);
+            final var exec = cp(source, destination);
             exec.waitFor();
             destinationConsumer.accept(destination);
             GlobalStatus.setLock(false);
@@ -120,8 +120,8 @@ public class AdminServiceImpl implements AdminService {
         return Optional.empty();
     }
 
-    private Optional<String> deleteFileSavePath(@NonNull String path, @NonNull List<String> fileSavePaths,
-                                                @NonNull Consumer<List<String>> setFileSavePathsConsumer) {
+    private Optional<String> deleteFileSavePath(@NonNull final String path, @NonNull final List<String> fileSavePaths,
+                                                @NonNull final Consumer<List<String>> setFileSavePathsConsumer) {
         final var toPaths = fileSavePaths.stream()
                 .filter(s -> !path.equals(s)).collect(toList());
         if (toPaths.size() == fileSavePaths.size()) {

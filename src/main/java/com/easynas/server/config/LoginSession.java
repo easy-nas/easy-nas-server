@@ -17,19 +17,19 @@ public class LoginSession {
     /**
      * token映射User
      */
-    private static Cache<String, User> tokenToUser = CacheBuilder.newBuilder()
+    private static final Cache<String, User> TOKEN_TO_USER = CacheBuilder.newBuilder()
             .maximumSize(1000)
             .expireAfterWrite(3, TimeUnit.DAYS)
             .build();
 
-    public static String getNewToken(@NonNull User user) {
+    public static String getNewToken(@NonNull final User user) {
         final var uuid = UUID.randomUUID().toString().replaceAll("-", "");
-        tokenToUser.put(uuid, user);
+        TOKEN_TO_USER.put(uuid, user);
         return uuid;
     }
 
-    public static Optional<User> getUserByToken(@NonNull String token) {
-        return Optional.ofNullable(tokenToUser.getIfPresent(token));
+    public static Optional<User> getUserByToken(@NonNull final String token) {
+        return Optional.ofNullable(TOKEN_TO_USER.getIfPresent(token));
     }
 
 }
