@@ -1,13 +1,10 @@
 package com.easynas.server.service;
 
+import com.google.common.io.Files;
 import lombok.NonNull;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author liangyongrui
@@ -61,6 +58,7 @@ public interface FileService {
                 .flatMap(Arrays::stream)
                 .filter(son -> fileName.equals(son.getName()))
                 .map(File::getAbsolutePath)
+                .map(Files::simplifyPath)
                 .findFirst();
     }
 

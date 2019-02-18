@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,10 +40,9 @@ public abstract class BaseConfigDao extends BaseDao implements ConfigDao {
         if (config.getFileSavePaths() == null) {
             final var defaultFileSavePaths = env.getProperty("defaultFileSavePaths.master", "easy-nas-data/file/");
             final var defaultFileSavePathsBackup = env.getProperty("defaultFileSavePaths.backup", "");
-            config.getFileSavePaths().putAll(Map.of(
-                    "master", List.of(defaultFileSavePaths),
-                    "backup", List.of(defaultFileSavePathsBackup)
-            ));
+            config.setFileSavePaths(new HashMap<>());
+            config.getFileSavePaths().put("master", List.of(defaultFileSavePaths));
+            config.getFileSavePaths().put("backup", List.of(defaultFileSavePathsBackup));
         }
         if (config.getGeneralInformationPath() == null) {
             String defaultGeneralInformationPath = env.getProperty("defaultGeneralInformationPath.master",

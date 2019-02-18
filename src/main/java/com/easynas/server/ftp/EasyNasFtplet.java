@@ -3,6 +3,8 @@ package com.easynas.server.ftp;
 import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
+import com.easynas.server.util.HashUtils;
+import com.google.common.io.Files;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ftpserver.ftplet.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +27,11 @@ public class EasyNasFtplet extends DefaultFtplet {
      * 上传结束 检查和转移文件，并创建同名软链接
      */
     @Override
-    public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws IOException {
-        final var path = session.getUser().getHomeDirectory() + request.getArgument();
-        final var sha256sum = CommandUtils.sha256sum(path);
+    public FtpletResult onUploadEnd(FtpSession session, FtpRequest request) throws IOException, FtpException {
+        final var path = Files.simplifyPath(session.getUser().getHomeDirectory()
+                + File.separator + session.getFileSystemView().getWorkingDirectory().getAbsolutePath()
+                + File.separator + request.getArgument());
+        final var sha256sum = HashUtils.fileSha256Sum(path);
         final var fileSavePath = fileService.saveFile(sha256sum, path);
         final var exec = CommandUtils.lnS(fileSavePath, path);
         try {

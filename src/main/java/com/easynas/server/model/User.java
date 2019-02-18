@@ -1,19 +1,21 @@
 package com.easynas.server.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author liangyongrui
  */
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Data
 public class User {
 
-    private final String username;
-    private final String passwordHash;
+    private String username;
+    private String passwordHash;
     /**
      * 是否为管理员
      */
-    private final Boolean admin;
+    private Boolean admin;
 }

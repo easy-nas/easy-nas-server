@@ -3,7 +3,7 @@ package com.easynas.server.service.impl;
 import com.easynas.server.dao.ConfigDao;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
-import static java.util.stream.Collectors.toMap;
+import com.google.common.io.Files;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author liangyongrui
@@ -81,7 +83,7 @@ public class FileServiceImpl implements FileService {
      */
     private String saveNewFile(@NonNull final String fileName, @NonNull final String path) {
         final var directoryPath = getMaxFreeSpacePath();
-        final var toPath = directoryPath + "/" + fileName;
+        final var toPath = Files.simplifyPath(directoryPath + File.separator + fileName);
         try {
             final var exec = CommandUtils.cp(path, toPath);
             exec.waitFor();

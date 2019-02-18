@@ -15,8 +15,6 @@ import java.io.InputStreamReader;
  */
 public class CommandUtils {
 
-    private static final int SHA256SUM_LENGTH = 64;
-
     private CommandUtils() {
     }
 
@@ -66,7 +64,7 @@ public class CommandUtils {
         if (!fa.exists() && !fa.mkdirs()) {
             throw new IOException("创建父目录失败");
         }
-        return Runtime.getRuntime().exec("cp " + source + " " + destination + " -r");
+        return Runtime.getRuntime().exec("cp -r " + source + " " + destination);
     }
 
     /**
@@ -90,23 +88,6 @@ public class CommandUtils {
         final var process = cp(source, destination);
         process.waitFor();
         return rm(source);
-    }
-
-    /**
-     * 获取文件的sha256sum
-     *
-     * @param filePath 文件路径
-     * @return sha256sum
-     * @throws IOException 地址不存在，地址是目录
-     */
-    public static String sha256sum(@NonNull final String filePath) throws IOException {
-        final var exec = Runtime.getRuntime().exec("sha256sum " + filePath);
-        final var info = getProcessString(exec);
-        final var infoSplit = info.split(" ");
-        if (infoSplit.length <= 1 || infoSplit[0].length() != SHA256SUM_LENGTH) {
-            throw new IOException("获取sha256sum失败， " + info);
-        }
-        return infoSplit[0];
     }
 
     public static String getProcessString(@NonNull final Process exec) throws IOException {
