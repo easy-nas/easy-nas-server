@@ -6,14 +6,11 @@ import com.easynas.server.service.AdminService;
 import com.easynas.server.service.ConfigService;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
-import static com.easynas.server.util.CommandUtils.cp;
-import static com.easynas.server.util.CommandUtils.rm;
-import static com.easynas.server.util.FileUtils.scatterMove;
-import static java.util.stream.Collectors.toList;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +20,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import static com.easynas.server.util.CollectionUtils.addList;
+import static com.easynas.server.util.CommandUtils.cp;
+import static com.easynas.server.util.CommandUtils.rm;
+import static com.easynas.server.util.FileUtils.scatterMove;
+import static java.util.stream.Collectors.toList;
+
 /**
  * @author liangyongrui
  */
 @Slf4j
 @Component
 public class AdminServiceImpl implements AdminService {
+
+    @Value("${spring.profiles.active}")
+    private String springProfilesActive;
 
     @Bean("adminService")
     @Autowired
@@ -81,20 +87,27 @@ public class AdminServiceImpl implements AdminService {
 
     private Optional<String> addFileSavePath(@NonNull final List<String> origin, @NonNull final String adder,
                                              @NonNull final Consumer<List<String>> fileSavePathConsumer) {
-        try {
-            final var pathPartition = CommandUtils.getPathPartition(adder);
-            for (String fileSavePath : origin) {
-                String filePartition = CommandUtils.getPathPartition(fileSavePath);
-                if (pathPartition.equals(filePartition)) {
-                    return Optional.of(adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition);
-                }
-            }
-        } catch (IOException e) {
-            log.error("判断分区错误", e);
-            return Optional.of("判断分区错误: " + e.toString());
+
+        final var adderFile = new File(adder);
+        if (!adderFile.exists() && !adderFile.mkdirs()) {
+            return Optional.of("添加路径" + adder + "失败");
         }
-        origin.add(adder);
-        fileSavePathConsumer.accept(origin);
+        String devStatus = "dev";
+        if (!devStatus.equals(springProfilesActive)) {
+            try {
+                final var pathPartition = CommandUtils.getPathPartition(adder);
+                for (String fileSavePath : origin) {
+                    String filePartition = CommandUtils.getPathPartition(fileSavePath);
+                    if (pathPartition.equals(filePartition)) {
+                        return Optional.of(adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition);
+                    }
+                }
+            } catch (IOException e) {
+                log.error("判断分区错误", e);
+                return Optional.of("判断分区错误: " + e.toString());
+            }
+        }
+        fileSavePathConsumer.accept(addList(origin, adder));
         return Optional.empty();
     }
 
@@ -143,7 +156,7 @@ public class AdminServiceImpl implements AdminService {
             return Optional.empty();
         }
         final var toDirectories = toPaths.stream().map(File::new).collect(toList());
-        if (scatterMove(fromDirectory, toDirectories)) {
+        if (!scatterMove(fromDirectory, toDirectories)) {
             return Optional.of("删除失败，可能是剩余文件保存路径空间不足");
         }
         setFileSavePathsConsumer.accept(toPaths);
