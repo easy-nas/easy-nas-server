@@ -16,10 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
-import java.util.function.Consumer;
 
+import static com.easynas.server.constant.CommonConstant.DEV_SPRING_PROFILES_ACTIVE;
 import static com.easynas.server.util.CollectionUtils.addList;
 import static com.easynas.server.util.CommandUtils.cp;
 import static com.easynas.server.util.CommandUtils.rm;
@@ -71,61 +70,19 @@ public class AdminServiceImpl implements AdminService {
         if (new File(path).exists()) {
             return Optional.of("该路径已存在！");
         }
-        return setGeneralInformationPath(configService.getGeneralInformationPath(), path,
-                configService::setGeneralInformationPath);
-    }
-
-    @Override
-    public Optional<String> addFileSavePath(@NonNull final String path) {
-        return addFileSavePath(fileService.getFileSaveRootPaths(), path, fileService::setFileSavePath);
-    }
-
-    @Override
-    public Optional<String> deleteFileSavePath(@NonNull final String path) {
-        return deleteFileSavePath(path, fileService.getFileSaveRootPaths(), fileService::setFileSavePath);
-    }
-
-    private Optional<String> addFileSavePath(@NonNull final List<String> origin, @NonNull final String adder,
-                                             @NonNull final Consumer<List<String>> fileSavePathConsumer) {
-
-        final var adderFile = new File(adder);
-        if (!adderFile.exists() && !adderFile.mkdirs()) {
-            return Optional.of("添加路径" + adder + "失败");
-        }
-        String devStatus = "dev";
-        if (!devStatus.equals(springProfilesActive)) {
-            try {
-                final var pathPartition = CommandUtils.getPathPartition(adder);
-                for (String fileSavePath : origin) {
-                    String filePartition = CommandUtils.getPathPartition(fileSavePath);
-                    if (pathPartition.equals(filePartition)) {
-                        return Optional.of(adder + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition);
-                    }
-                }
-            } catch (IOException e) {
-                log.error("判断分区错误", e);
-                return Optional.of("判断分区错误: " + e.toString());
-            }
-        }
-        fileSavePathConsumer.accept(addList(origin, adder));
-        return Optional.empty();
-    }
-
-    private Optional<String> setGeneralInformationPath(@NonNull final String source, @NonNull final String destination,
-                                                       @NonNull final Consumer<String> destinationConsumer) {
-
+        final var source = configService.getGeneralInformationPath();
         try {
             if (!GlobalStatus.setLock(true)) {
                 log.error("加锁失败");
                 throw new RuntimeException();
             }
-            final var exec = cp(source, destination);
+            final var exec = cp(source, path);
             exec.waitFor();
-            destinationConsumer.accept(destination);
+            configService.setGeneralInformationPath(path);
             GlobalStatus.setLock(false);
             rm(source);
         } catch (IOException | InterruptedException e) {
-            final var errorMessage = "移动文件失败，source: " + source + ", destination: " + destination;
+            final var errorMessage = "移动文件失败，source: " + source + ", destination: " + path;
             log.error(errorMessage, e);
             return Optional.of(errorMessage);
         }
@@ -133,8 +90,34 @@ public class AdminServiceImpl implements AdminService {
         return Optional.empty();
     }
 
-    private Optional<String> deleteFileSavePath(@NonNull final String path, @NonNull final List<String> fileSavePaths,
-                                                @NonNull final Consumer<List<String>> setFileSavePathsConsumer) {
+    @Override
+    public Optional<String> addFileSavePath(@NonNull final String path) {
+        final var origin = fileService.getFileSaveRootPaths();
+        final var adderFile = new File(path);
+        if (!adderFile.exists() && !adderFile.mkdirs()) {
+            return Optional.of("添加路径" + path + "失败");
+        }
+        if (!DEV_SPRING_PROFILES_ACTIVE.equals(springProfilesActive)) {
+            try {
+                final var pathPartition = CommandUtils.getPathPartition(path);
+                for (String fileSavePath : origin) {
+                    String filePartition = CommandUtils.getPathPartition(fileSavePath);
+                    if (pathPartition.equals(filePartition)) {
+                        return Optional.of(path + " 所在分区，与" + fileSavePath + "所在分区相同，均为" + pathPartition);
+                    }
+                }
+            } catch (IOException e) {
+                log.error("判断分区错误", e);
+                return Optional.of("判断分区错误: " + e.toString());
+            }
+        }
+        fileService.setFileSavePath(addList(origin, path));
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> deleteFileSavePath(@NonNull final String path) {
+        final var fileSavePaths = fileService.getFileSaveRootPaths();
         final var toPaths = fileSavePaths.stream()
                 .filter(s -> !path.equals(s)).collect(toList());
         if (toPaths.size() == fileSavePaths.size()) {
@@ -152,14 +135,14 @@ public class AdminServiceImpl implements AdminService {
             } catch (IOException e) {
                 return Optional.of("删除失败, " + e.toString());
             }
-            setFileSavePathsConsumer.accept(toPaths);
+            fileService.setFileSavePath(toPaths);
             return Optional.empty();
         }
         final var toDirectories = toPaths.stream().map(File::new).collect(toList());
         if (!scatterMove(fromDirectory, toDirectories)) {
             return Optional.of("删除失败，可能是剩余文件保存路径空间不足");
         }
-        setFileSavePathsConsumer.accept(toPaths);
+        fileService.setFileSavePath(toPaths);
         return Optional.empty();
     }
 
