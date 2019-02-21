@@ -22,7 +22,7 @@ import static com.easynas.server.constant.CommonConstant.DEV_SPRING_PROFILES_ACT
 import static com.easynas.server.util.CollectionUtils.addList;
 import static com.easynas.server.util.CommandUtils.cp;
 import static com.easynas.server.util.CommandUtils.rm;
-import static com.easynas.server.util.FileUtils.scatterMove;
+import static com.easynas.server.util.FileUtils.scatterCopy;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -118,8 +118,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Optional<String> deleteFileSavePath(@NonNull final String path) {
         final var fileSavePaths = fileService.getFileSaveRootPaths();
-        final var toPaths = fileSavePaths.stream()
-                .filter(s -> !path.equals(s)).collect(toList());
+        final var toPaths = fileSavePaths.stream().filter(s -> !path.equals(s)).collect(toList());
         if (toPaths.size() == fileSavePaths.size()) {
             return Optional.of("删除失败，路径不存在");
         }
@@ -139,9 +138,13 @@ public class AdminServiceImpl implements AdminService {
             return Optional.empty();
         }
         final var toDirectories = toPaths.stream().map(File::new).collect(toList());
-        if (!scatterMove(fromDirectory, toDirectories)) {
+        final var copyMap = scatterCopy(fromDirectory, toDirectories);
+        if (copyMap.isEmpty()) {
             return Optional.of("删除失败，可能是剩余文件保存路径空间不足");
         }
+        log.info("源文件地址 => 目的文件地址：" + copyMap);
+        //todo 源文件映射的软连接
+
         fileService.setFileSavePath(toPaths);
         return Optional.empty();
     }

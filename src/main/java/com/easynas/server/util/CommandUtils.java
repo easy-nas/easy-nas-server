@@ -44,7 +44,7 @@ public class CommandUtils {
      */
     @CanIgnoreReturnValue
     public static Process rm(@NonNull final String path) throws IOException {
-        return Runtime.getRuntime().exec("rm " + path + " -rf");
+        return Runtime.getRuntime().exec("rm -rf " + path);
     }
 
     /**
