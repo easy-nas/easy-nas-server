@@ -2,67 +2,52 @@ package com.easynas.server.service.impl;
 
 import com.easynas.server.config.GlobalStatus;
 import com.easynas.server.dao.UserDao;
+import com.easynas.server.handler.RuntimeHandler;
 import com.easynas.server.service.AdminService;
 import com.easynas.server.service.ConfigService;
 import com.easynas.server.service.FileService;
 import com.easynas.server.util.CommandUtils;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-import static com.easynas.server.constant.CommonConstant.DEV_SPRING_PROFILES_ACTIVE;
 import static com.easynas.server.util.CollectionUtils.addList;
 import static com.easynas.server.util.CommandUtils.cp;
 import static com.easynas.server.util.CommandUtils.rm;
-import static com.easynas.server.util.FileUtils.scatterCopy;
+import static com.easynas.server.util.FileUtils.copyFiles;
+import static com.easynas.server.util.FileUtils.getMoveMap;
 import static java.util.stream.Collectors.toList;
 
 /**
  * @author liangyongrui
  */
 @Slf4j
-@Component
 public class AdminServiceImpl implements AdminService {
-
-    @Value("${spring.profiles.active}")
-    private String springProfilesActive;
-
-    @Bean("adminService")
-    @Autowired
-    public AdminService getAdminService(
-            @NonNull final UserDao userDao,
-            @Qualifier("configService") @NonNull final ConfigService configService,
-            @Qualifier("fileService") @NonNull final FileService fileService) {
-        return new AdminServiceImpl(userDao, configService, fileService);
-    }
-
-    @Bean("adminBackupService")
-    @Autowired
-    public AdminService getAdminBackupService(
-            @NonNull final UserDao userDao,
-            @Qualifier("configBackupService") @NonNull final ConfigService configService,
-            @Qualifier("fileBackupService") @NonNull final FileService fileService) {
-        return new AdminServiceImpl(userDao, configService, fileService);
-    }
 
     private final ConfigService configService;
     private final FileService fileService;
     private final UserDao userDao;
+    private final RuntimeHandler runtimeHandler;
+    /**
+     * 当前的service的类型 ['master','backup']
+     */
+    private final String type;
 
     public AdminServiceImpl(@NonNull final UserDao userDao,
+                            @NonNull final RuntimeHandler runtimeHandler,
                             @NonNull final ConfigService configService,
-                            @NonNull final FileService fileService) {
+                            @NonNull final FileService fileService,
+                            @NonNull final String type) {
         this.configService = configService;
         this.fileService = fileService;
         this.userDao = userDao;
+        this.runtimeHandler = runtimeHandler;
+        this.type = type;
     }
 
     @Override
@@ -97,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
         if (!adderFile.exists() && !adderFile.mkdirs()) {
             return Optional.of("添加路径" + path + "失败");
         }
-        if (!DEV_SPRING_PROFILES_ACTIVE.equals(springProfilesActive)) {
+        final var checkResult = runtimeHandler.supplyInProduction((Supplier<Optional<String>>) () -> {
             try {
                 final var pathPartition = CommandUtils.getPathPartition(path);
                 for (String fileSavePath : origin) {
@@ -110,6 +95,10 @@ public class AdminServiceImpl implements AdminService {
                 log.error("判断分区错误", e);
                 return Optional.of("判断分区错误: " + e.toString());
             }
+            return Optional.empty();
+        }, Optional.empty());
+        if (checkResult.isPresent()) {
+            return checkResult;
         }
         fileService.setFileSavePath(addList(origin, path));
         return Optional.empty();
@@ -138,15 +127,29 @@ public class AdminServiceImpl implements AdminService {
             return Optional.empty();
         }
         final var toDirectories = toPaths.stream().map(File::new).collect(toList());
-        final var copyMap = scatterCopy(fromDirectory, toDirectories);
-        if (copyMap.isEmpty()) {
+        final var moveMap = getMoveMap(fromDirectory, toDirectories);
+        if (moveMap.isEmpty()) {
             return Optional.of("删除失败，可能是剩余文件保存路径空间不足");
         }
-        log.info("源文件地址 => 目的文件地址：" + copyMap);
-        //todo 源文件映射的软连接
-
+        log.info("源文件地址 => 目的文件地址：" + moveMap);
+        final var moveResult = moveFiles(moveMap);
         fileService.setFileSavePath(toPaths);
         return Optional.empty();
+    }
+
+    /**
+     * 移动文件，并改变用户的软连接
+     *
+     * @param moveMap
+     * @return
+     */
+    private boolean moveFiles(Map<String, String> moveMap) {
+        if (copyFiles(moveMap)) {
+            log.error("moveFiles, 复制文件失败");
+            return false;
+        }
+        //todo
+        return true;
     }
 
 }

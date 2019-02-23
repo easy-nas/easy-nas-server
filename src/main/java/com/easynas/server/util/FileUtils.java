@@ -42,13 +42,13 @@ public class FileUtils {
     }
 
     /**
-     * 把 fromDirectory 中的文件， 随机复制到toDirectories中
+     * 获取把 fromDirectory 中的文件， 随机复制到toDirectories中 的路径映射，并不会进行真正的复制
      *
      * @param fromDirectory 复制源地址
      * @param toDirectories 复制目标目录们
      * @return 不可变map（复制之前的地址，复制后的地址）
      */
-    public static Map<String, String> scatterCopy(@NonNull final File fromDirectory, @NonNull final List<File> toDirectories) {
+    public static Map<String, String> getMoveMap(@NonNull final File fromDirectory, @NonNull final List<File> toDirectories) {
         final var needCopyFiles = fromDirectory.listFiles();
         final var resultSize = Optional.ofNullable(needCopyFiles).map(t -> t.length).orElse(0);
         Map<String, String> result = new HashMap<>(resultSize);
@@ -66,13 +66,7 @@ public class FileUtils {
             assert topDirectory != null;
             final var fromPath = file.getAbsolutePath();
             final var toPath = topDirectory.getValue().getPath();
-            try {
-                cp(fromPath, toPath).waitFor();
-                result.put(fromPath, toPath);
-            } catch (IOException | InterruptedException e) {
-                log.error("移动文件失败," + fromPath + "=>" + toPath, e);
-                return Map.copyOf(result);
-            }
+            result.put(fromPath, toPath);
             directorySizeHead.add(new Pair<>(topDirectory.getKey() - size, topDirectory.getValue()));
         }
         return Map.copyOf(result);
@@ -96,6 +90,17 @@ public class FileUtils {
         final var fileChildren = file.listFiles();
         assert fileChildren != null;
         return Arrays.stream(fileChildren).map(FileUtils::getPathSize).mapToLong(t -> t).sum();
+    }
+
+    public static boolean copyFiles(@NonNull final Map<String, String> copyMap) {
+        for (final var entry : copyMap.entrySet()) {
+            try {
+                cp(entry.getKey(), entry.getValue());
+            } catch (IOException e) {
+                log.error("复制出错, " + entry, e);
+            }
+        }
+        return true;
     }
 
 }
